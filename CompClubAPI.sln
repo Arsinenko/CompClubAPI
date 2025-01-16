@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35617.110 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompClubAPI", "CompClubAPI.csproj", "{1C827170-42C9-474C-97AF-E541E4613092}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C827170-42C9-474C-97AF-E541E4613092}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C827170-42C9-474C-97AF-E541E4613092}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C827170-42C9-474C-97AF-E541E4613092}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C827170-42C9-474C-97AF-E541E4613092}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D67AEE1B-DCD5-49AD-9000-EC99EC797291}
+	EndGlobalSection
+EndGlobal
