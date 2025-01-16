@@ -21,7 +21,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Clubs
-        [HttpGet]
+        [HttpGet("get_clubs")]
         public async Task<ActionResult<IEnumerable<Club>>> GetClubs()
         {
             return await _context.Clubs.ToListAsync();
@@ -43,7 +43,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Clubs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("update_club/{id}")]
         public async Task<IActionResult> PutClub(int id, Club club)
         {
             if (id != club.Id)
@@ -74,7 +74,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Clubs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("create_club")]
         public async Task<ActionResult<Club>> PostClub(Club club)
         {
             _context.Clubs.Add(club);
@@ -84,7 +84,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/Clubs/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete_club{id}")]
         public async Task<IActionResult> DeleteClub(int id)
         {
             var club = await _context.Clubs.FindAsync(id);

@@ -28,7 +28,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Employees/5
-        [HttpGet("{id}")]
+        [HttpGet("get_info/{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
             var employee = await _context.Employees.FindAsync(id);
@@ -43,7 +43,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("update_info/{id}")]
         public async Task<IActionResult> PutEmployee(int id, Employee employee)
         {
             if (id != employee.Id)
@@ -74,7 +74,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Employees
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("hire_employee")]
         public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
         {
             _context.Employees.Add(employee);
@@ -84,7 +84,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/Employees/5
-        [HttpDelete("{id}")]
+        [HttpDelete("fire_employee/{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             var employee = await _context.Employees.FindAsync(id);

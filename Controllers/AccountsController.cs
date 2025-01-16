@@ -43,7 +43,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Accounts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("update_account/{id}")]
         public async Task<IActionResult> PutAccount(int id, Account account)
         {
             if (id != account.Id)
@@ -74,7 +74,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Accounts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("create_account")]
         public async Task<ActionResult<Account>> PostAccount(Account account)
         {
             _context.Accounts.Add(account);
@@ -84,7 +84,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/Accounts/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete_account/{id}")]
         public async Task<IActionResult> DeleteAccount(int id)
         {
             var account = await _context.Accounts.FindAsync(id);

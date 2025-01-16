@@ -43,7 +43,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/EquipmentMaintenances/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("update_info/{id}")]
         public async Task<IActionResult> PutEquipmentMaintenance(int id, EquipmentMaintenance equipmentMaintenance)
         {
             if (id != equipmentMaintenance.Id)
@@ -74,7 +74,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/EquipmentMaintenances
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("create_report")]
         public async Task<ActionResult<EquipmentMaintenance>> PostEquipmentMaintenance(EquipmentMaintenance equipmentMaintenance)
         {
             _context.EquipmentMaintenances.Add(equipmentMaintenance);
@@ -84,7 +84,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/EquipmentMaintenances/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteEquipmentMaintenance(int id)
         {
             var equipmentMaintenance = await _context.EquipmentMaintenances.FindAsync(id);

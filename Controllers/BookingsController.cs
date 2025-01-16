@@ -21,7 +21,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Bookings
-        [HttpGet]
+        [HttpGet("get_bookings")]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
         {
             return await _context.Bookings.ToListAsync();
@@ -43,7 +43,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Bookings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("update_boking/{id}")]
         public async Task<IActionResult> PutBooking(int id, Booking booking)
         {
             if (id != booking.Id)
@@ -74,7 +74,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Bookings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("create_booking")]
         public async Task<ActionResult<Booking>> PostBooking(Booking booking)
         {
             _context.Bookings.Add(booking);
@@ -84,7 +84,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/Bookings/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete_booking{id}")]
         public async Task<IActionResult> DeleteBooking(int id)
         {
             var booking = await _context.Bookings.FindAsync(id);

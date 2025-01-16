@@ -21,14 +21,14 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Equipments
-        [HttpGet]
+        [HttpGet("equipments_list")]
         public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipment()
         {
             return await _context.Equipment.ToListAsync();
         }
 
         // GET: api/Equipments/5
-        [HttpGet("{id}")]
+        [HttpGet("equipment_data/{id}")]
         public async Task<ActionResult<Equipment>> GetEquipment(int id)
         {
             var equipment = await _context.Equipment.FindAsync(id);
@@ -43,7 +43,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Equipments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("update_data/{id}")]
         public async Task<IActionResult> PutEquipment(int id, Equipment equipment)
         {
             if (id != equipment.Id)
@@ -74,7 +74,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Equipments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("new_equipment")]
         public async Task<ActionResult<Equipment>> PostEquipment(Equipment equipment)
         {
             _context.Equipment.Add(equipment);
@@ -84,7 +84,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/Equipments/5
-        [HttpDelete("{id}")]
+        [HttpDelete("scrap/{id}")]
         public async Task<IActionResult> DeleteEquipment(int id)
         {
             var equipment = await _context.Equipment.FindAsync(id);

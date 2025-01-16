@@ -28,7 +28,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/GameLaunchers/5
-        [HttpGet("{id}")]
+        [HttpGet("get_info/{id}")]
         public async Task<ActionResult<GameLauncher>> GetGameLauncher(int id)
         {
             var gameLauncher = await _context.GameLaunchers.FindAsync(id);
@@ -43,7 +43,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/GameLaunchers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("update_data/{id}")]
         public async Task<IActionResult> PutGameLauncher(int id, GameLauncher gameLauncher)
         {
             if (id != gameLauncher.Id)
@@ -74,7 +74,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/GameLaunchers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("add_launcher")]
         public async Task<ActionResult<GameLauncher>> PostGameLauncher(GameLauncher gameLauncher)
         {
             _context.GameLaunchers.Add(gameLauncher);
@@ -84,7 +84,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/GameLaunchers/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete_launcher/{id}")]
         public async Task<IActionResult> DeleteGameLauncher(int id)
         {
             var gameLauncher = await _context.GameLaunchers.FindAsync(id);

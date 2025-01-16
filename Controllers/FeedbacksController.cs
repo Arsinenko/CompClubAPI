@@ -28,7 +28,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Feedbacks/5
-        [HttpGet("{id}")]
+        [HttpGet("get_info/{id}")]
         public async Task<ActionResult<Feedback>> GetFeedback(int id)
         {
             var feedback = await _context.Feedbacks.FindAsync(id);
@@ -43,7 +43,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Feedbacks/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> PutFeedback(int id, Feedback feedback)
         {
             if (id != feedback.Id)
@@ -74,29 +74,13 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Feedbacks
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("new_feedback")]
         public async Task<ActionResult<Feedback>> PostFeedback(Feedback feedback)
         {
             _context.Feedbacks.Add(feedback);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetFeedback", new { id = feedback.Id }, feedback);
-        }
-
-        // DELETE: api/Feedbacks/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFeedback(int id)
-        {
-            var feedback = await _context.Feedbacks.FindAsync(id);
-            if (feedback == null)
-            {
-                return NotFound();
-            }
-
-            _context.Feedbacks.Remove(feedback);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
         private bool FeedbackExists(int id)
