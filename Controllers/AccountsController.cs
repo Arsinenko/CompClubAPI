@@ -21,7 +21,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Accounts
-        [HttpGet]
+        [HttpGet("get_accounts")]
         public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
         {
             return await _context.Accounts.ToListAsync();

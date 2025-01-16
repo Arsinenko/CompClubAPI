@@ -36,8 +36,6 @@ namespace CompClubAPI
 
             app.MapControllers();
 
-            app.MapClientEndpoints();
-
             app.Run();
         }
     }
