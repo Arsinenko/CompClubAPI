@@ -28,7 +28,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Games/5
-        [HttpGet("{id}")]
+        [HttpGet("game_info/{id}")]
         public async Task<ActionResult<Game>> GetGame(int id)
         {
             var game = await _context.Games.FindAsync(id);
@@ -43,7 +43,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Games/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("update_info/{id}")]
         public async Task<IActionResult> PutGame(int id, Game game)
         {
             if (id != game.Id)
@@ -74,7 +74,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Games
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("create_game")]
         public async Task<ActionResult<Game>> PostGame(Game game)
         {
             _context.Games.Add(game);
@@ -84,7 +84,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/Games/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteGame(int id)
         {
             var game = await _context.Games.FindAsync(id);

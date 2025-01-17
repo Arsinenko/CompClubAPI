@@ -74,7 +74,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Payments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<Payment>> PostPayment(Payment payment)
         {
             _context.Payments.Add(payment);
@@ -84,7 +84,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/Payments/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeletePayment(int id)
         {
             var payment = await _context.Payments.FindAsync(id);

@@ -1,8 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
@@ -11,24 +6,24 @@ namespace CompClubAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolesController : ControllerBase
+    public class RoleController : ControllerBase
     {
         private readonly CollegeTaskContext _context;
 
-        public RolesController(CollegeTaskContext context)
+        public RoleController(CollegeTaskContext context)
         {
             _context = context;
         }
 
-        // GET: api/Roles
+        // GET: api/Role
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
         {
             return await _context.Roles.ToListAsync();
         }
 
-        // GET: api/Roles/5
-        [HttpGet("{id}")]
+        // GET: api/Role/5
+        [HttpGet("get_info/{id}")]
         public async Task<ActionResult<Role>> GetRole(int id)
         {
             var role = await _context.Roles.FindAsync(id);
@@ -41,9 +36,9 @@ namespace CompClubAPI.Controllers
             return role;
         }
 
-        // PUT: api/Roles/5
+        // PUT: api/Role/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> PutRole(int id, Role role)
         {
             if (id != role.Id)
@@ -72,9 +67,9 @@ namespace CompClubAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Roles
+        // POST: api/Role
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<Role>> PostRole(Role role)
         {
             _context.Roles.Add(role);
@@ -83,8 +78,8 @@ namespace CompClubAPI.Controllers
             return CreatedAtAction("GetRole", new { id = role.Id }, role);
         }
 
-        // DELETE: api/Roles/5
-        [HttpDelete("{id}")]
+        // DELETE: api/Role/5
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteRole(int id)
         {
             var role = await _context.Roles.FindAsync(id);
