@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using System.Text.Json.Serialization;
-using CompClubAPI.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.OpenApi;
-using Microsoft.EntityFrameworkCore;
 
 namespace CompClubAPI.Models;
 

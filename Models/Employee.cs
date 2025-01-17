@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
@@ -14,9 +15,7 @@ public partial class Employee
 
     public string PassportData { get; set; } = null!;
 
-    public DateOnly HireDate { get; set; }
-
-    public int IdUser { get; set; }
+    public DateOnly? HireDate { get; set; }
 
     public int IdRole { get; set; }
 

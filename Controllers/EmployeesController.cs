@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
+using CompClubAPI.Schemas;
 
 namespace CompClubAPI.Controllers
 {
@@ -75,8 +76,14 @@ namespace CompClubAPI.Controllers
         // POST: api/Employees
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("hire_employee")]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
+        public async Task<ActionResult<Employee>> PostEmployee(HireEmployeeModel model)
         {
+            byte[] password = HashHelper.GenerateHash(model.password);
+            Employee employee = new Employee
+            {
+                Login = model.login, Password = password, PassportData = model.passpordData, HireDate = model.hire_date,
+                IdRole = model.idRole, Salary = model.salary
+            };
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
 
