@@ -12,5 +12,7 @@ public partial class Account
 
     public int IdClient { get; set; }
 
+    public decimal? Balance { get; set; }
+
     [JsonIgnore] public virtual Client IdClientNavigation { get; set; } = null!;
 }

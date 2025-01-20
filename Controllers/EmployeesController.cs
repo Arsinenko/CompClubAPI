@@ -82,7 +82,7 @@ namespace CompClubAPI.Controllers
             Employee employee = new Employee
             {
                 Login = model.login, Password = password, PassportData = model.passpordData, HireDate = model.hire_date,
-                IdRole = model.idRole, Salary = model.salary
+                IdRole = model.idRole, Salary = model.salary,IdClub = model.idClub
             };
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();

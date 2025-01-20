@@ -57,22 +57,25 @@ public partial class CollegeTaskContext : DbContext
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Account__3213E83F7309626D");
+            entity.HasKey(e => e.Id).HasName("PK__Account__3213E83F277E432D");
 
             entity.ToTable("Account");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Balance)
+                .HasColumnType("money")
+                .HasColumnName("balance");
             entity.Property(e => e.IdClient).HasColumnName("id_client");
 
             entity.HasOne(d => d.IdClientNavigation).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.IdClient)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Account__id_clie__71D1E811");
+                .HasConstraintName("FK__Account__id_clie__2B0A656D");
         });
 
         modelBuilder.Entity<Booking>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Booking__3213E83F649E2DA9");
+            entity.HasKey(e => e.Id).HasName("PK__Booking__3213E83FC1B1285F");
 
             entity.ToTable("Booking");
 
@@ -98,17 +101,17 @@ public partial class CollegeTaskContext : DbContext
             entity.HasOne(d => d.IdClientNavigation).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.IdClient)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Booking__id_clie__208CD6FA");
+                .HasConstraintName("FK__Booking__id_clie__59C55456");
 
             entity.HasOne(d => d.IdWorkingSpaceNavigation).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.IdWorkingSpace)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Booking__id_work__2180FB33");
+                .HasConstraintName("FK__Booking__id_work__5AB9788F");
         });
 
         modelBuilder.Entity<Client>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Client__3213E83F5098C01B");
+            entity.HasKey(e => e.Id).HasName("PK__Client__3213E83F30D0479D");
 
             entity.ToTable("Client");
 
@@ -133,41 +136,34 @@ public partial class CollegeTaskContext : DbContext
 
         modelBuilder.Entity<Club>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Club__3213E83FF9092640");
+            entity.HasKey(e => e.Id).HasName("PK__Club__3213E83F32C10B1A");
 
             entity.ToTable("Club");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Address)
-                .HasMaxLength(50)
-                .HasColumnName("address");
-            entity.Property(e => e.Employees).HasColumnName("employees");
+            entity.Property(e => e.Address).HasColumnName("address");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("_name");
             entity.Property(e => e.Phone)
-                .HasMaxLength(8)
+                .HasMaxLength(15)
                 .IsUnicode(false)
                 .HasColumnName("phone");
             entity.Property(e => e.WorkingHours)
                 .HasMaxLength(50)
                 .HasDefaultValue("10:00-21:00")
                 .HasColumnName("working_hours");
-
-            entity.HasOne(d => d.EmployeesNavigation).WithMany(p => p.Clubs)
-                .HasForeignKey(d => d.Employees)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Club__employees__04E4BC85");
         });
 
         modelBuilder.Entity<Employee>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Employee__3213E83FBD0BCBEB");
+            entity.HasKey(e => e.Id).HasName("PK__Employee__3213E83F5C09894B");
 
             entity.ToTable("Employee");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.HireDate).HasColumnName("hire_date");
+            entity.Property(e => e.IdClub).HasColumnName("id_club");
             entity.Property(e => e.IdRole).HasColumnName("id_role");
             entity.Property(e => e.Login)
                 .HasMaxLength(50)
@@ -183,15 +179,20 @@ public partial class CollegeTaskContext : DbContext
                 .HasColumnType("money")
                 .HasColumnName("salary");
 
+            entity.HasOne(d => d.IdClubNavigation).WithMany(p => p.Employees)
+                .HasForeignKey(d => d.IdClub)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Employee__id_clu__5F7E2DAC");
+
             entity.HasOne(d => d.IdRoleNavigation).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.IdRole)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Employee__id_rol__01142BA1");
+                .HasConstraintName("FK__Employee__id_rol__3A4CA8FD");
         });
 
         modelBuilder.Entity<Equipment>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Equipmen__3213E83F49A03BB9");
+            entity.HasKey(e => e.Id).HasName("PK__Equipmen__3213E83F38C4C1B9");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.IdClub).HasColumnName("id_club");
@@ -216,17 +217,17 @@ public partial class CollegeTaskContext : DbContext
             entity.HasOne(d => d.IdClubNavigation).WithMany(p => p.Equipment)
                 .HasForeignKey(d => d.IdClub)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Equipment__id_cl__07C12930");
+                .HasConstraintName("FK__Equipment__id_cl__40F9A68C");
 
             entity.HasOne(d => d.StatusNavigation).WithMany(p => p.Equipment)
                 .HasForeignKey(d => d.Status)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Equipment__statu__08B54D69");
+                .HasConstraintName("FK__Equipment__statu__41EDCAC5");
         });
 
         modelBuilder.Entity<EquipmentMaintenance>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Equipmen__3213E83F056E2A84");
+            entity.HasKey(e => e.Id).HasName("PK__Equipmen__3213E83FC092CE87");
 
             entity.ToTable("EquipmentMaintenance");
 
@@ -244,12 +245,12 @@ public partial class CollegeTaskContext : DbContext
             entity.HasOne(d => d.Equipment).WithMany(p => p.EquipmentMaintenances)
                 .HasForeignKey(d => d.EquipmentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Equipment__equip__0C85DE4D");
+                .HasConstraintName("FK__Equipment__equip__45BE5BA9");
         });
 
         modelBuilder.Entity<EquipmentStatus>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Equipmen__3213E83FA95320A5");
+            entity.HasKey(e => e.Id).HasName("PK__Equipmen__3213E83F2E2D25B6");
 
             entity.ToTable("EquipmentStatus");
 
@@ -261,7 +262,7 @@ public partial class CollegeTaskContext : DbContext
 
         modelBuilder.Entity<Feedback>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Feedback__3213E83F7861A7C0");
+            entity.HasKey(e => e.Id).HasName("PK__Feedback__3213E83FB7E3D431");
 
             entity.ToTable("Feedback");
 
@@ -277,17 +278,17 @@ public partial class CollegeTaskContext : DbContext
 
             entity.HasOne(d => d.IdClientNavigation).WithMany(p => p.Feedbacks)
                 .HasForeignKey(d => d.IdClient)
-                .HasConstraintName("FK__Feedback__id_cli__114A936A");
+                .HasConstraintName("FK__Feedback__id_cli__4A8310C6");
 
             entity.HasOne(d => d.IdClubNavigation).WithMany(p => p.Feedbacks)
                 .HasForeignKey(d => d.IdClub)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Feedback__id_clu__10566F31");
+                .HasConstraintName("FK__Feedback__id_clu__498EEC8D");
         });
 
         modelBuilder.Entity<Game>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Game__3213E83FE7CB9C64");
+            entity.HasKey(e => e.Id).HasName("PK__Game__3213E83F3A6D7B6C");
 
             entity.ToTable("Game");
 
@@ -302,12 +303,12 @@ public partial class CollegeTaskContext : DbContext
 
             entity.HasOne(d => d.IdLauncherNavigation).WithMany(p => p.Games)
                 .HasForeignKey(d => d.IdLauncher)
-                .HasConstraintName("FK__Game__id_launche__787EE5A0");
+                .HasConstraintName("FK__Game__id_launche__31B762FC");
         });
 
         modelBuilder.Entity<GameLauncher>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__GameLaun__3213E83F0F3DA984");
+            entity.HasKey(e => e.Id).HasName("PK__GameLaun__3213E83F9241E2D4");
 
             entity.ToTable("GameLauncher");
 
@@ -338,12 +339,12 @@ public partial class CollegeTaskContext : DbContext
             entity.HasOne(d => d.Client).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.ClientId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Payment__client___7C4F7684");
+                .HasConstraintName("FK__Payment__client___3587F3E0");
         });
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Role__3213E83F8F331E04");
+            entity.HasKey(e => e.Id).HasName("PK__Role__3213E83FB39E85B7");
 
             entity.ToTable("Role");
 
@@ -355,7 +356,7 @@ public partial class CollegeTaskContext : DbContext
 
         modelBuilder.Entity<Shift>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Shift__3213E83F9AC31D1E");
+            entity.HasKey(e => e.Id).HasName("PK__Shift__3213E83FD85ED888");
 
             entity.ToTable("Shift");
 
@@ -371,12 +372,12 @@ public partial class CollegeTaskContext : DbContext
             entity.HasOne(d => d.IdEmployeeNavigation).WithMany(p => p.Shifts)
                 .HasForeignKey(d => d.IdEmployee)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Shift__id_employ__160F4887");
+                .HasConstraintName("FK__Shift__id_employ__4F47C5E3");
         });
 
         modelBuilder.Entity<UserActionLog>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__UserActi__3213E83FDCE58999");
+            entity.HasKey(e => e.Id).HasName("PK__UserActi__3213E83FB68F2708");
 
             entity.ToTable("UserActionLog");
 
@@ -395,12 +396,12 @@ public partial class CollegeTaskContext : DbContext
 
             entity.HasOne(d => d.Client).WithMany(p => p.UserActionLogs)
                 .HasForeignKey(d => d.ClientId)
-                .HasConstraintName("FK__UserActio__clien__18EBB532");
+                .HasConstraintName("FK__UserActio__clien__5224328E");
         });
 
         modelBuilder.Entity<WorkingSpace>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__WorkingS__3213E83FC7652170");
+            entity.HasKey(e => e.Id).HasName("PK__WorkingS__3213E83FD78B3B9E");
 
             entity.ToTable("WorkingSpace");
 
@@ -413,7 +414,7 @@ public partial class CollegeTaskContext : DbContext
             entity.HasOne(d => d.IdEquipmentNavigation).WithMany(p => p.WorkingSpaces)
                 .HasForeignKey(d => d.IdEquipment)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WorkingSp__id_eq__1CBC4616");
+                .HasConstraintName("FK__WorkingSp__id_eq__55F4C372");
         });
 
         OnModelCreatingPartial(modelBuilder);

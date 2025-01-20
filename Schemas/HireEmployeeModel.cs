@@ -7,5 +7,6 @@ public class HireEmployeeModel
     public string passpordData { get; set; }
     public DateOnly? hire_date { get; set; }
     public int idRole { get; set; }
+    public int idClub { get; set; }
     public int salary { get; set; }
 }

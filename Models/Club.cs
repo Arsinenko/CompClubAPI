@@ -17,9 +17,7 @@ public partial class Club
 
     public string? WorkingHours { get; set; }
 
-    public int Employees { get; set; }
-
-    [JsonIgnore] public virtual Employee EmployeesNavigation { get; set; } = null!;
+    [JsonIgnore] public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
     [JsonIgnore] public virtual ICollection<Equipment> Equipment { get; set; } = new List<Equipment>();
 

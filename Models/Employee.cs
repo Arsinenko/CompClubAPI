@@ -21,7 +21,9 @@ public partial class Employee
 
     public decimal Salary { get; set; }
 
-    [JsonIgnore] public virtual ICollection<Club> Clubs { get; set; } = new List<Club>();
+    public int IdClub { get; set; }
+
+    [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;
 
     [JsonIgnore] public virtual Role IdRoleNavigation { get; set; } = null!;
 
