@@ -20,7 +20,12 @@ namespace CompClubAPI.Controllers
         [HttpPost("create_client")]
         public async Task<ActionResult<Client>> PostClient(CreateClient clientModel)
         {
+
             string login = clientModel.login;
+            if (_context.Clients.FirstOrDefault(c => c.Login == login) != null)
+            {
+                return BadRequest("Client already exist!");
+            }
             byte[] password = HashHelper.GenerateHash(clientModel.password);
             Client client = new Client
             {

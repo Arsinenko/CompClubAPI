@@ -129,7 +129,7 @@ public partial class CollegeTaskContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("middle_name");
             entity.Property(e => e.Password)
-                .HasMaxLength(64)
+                .HasMaxLength(32)
                 .IsFixedLength()
                 .HasColumnName("password");
         });

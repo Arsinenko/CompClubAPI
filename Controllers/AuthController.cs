@@ -23,24 +23,26 @@ namespace CompClubAPI.Controllers
         [HttpPost("auth")]
         public IActionResult Login(AuthModel login)
         {
-            Client? client = _context.Clients.FirstOrDefault(c => c.Login == login.login);
+            byte[] passwordHash = HashHelper.GenerateHash(login.password);
+
+            Client? client = _context.Clients.FirstOrDefault(c => c.Login == login.login && c.Password.SequenceEqual(passwordHash));
             if (client == null)
             {
-                return NotFound("Client not found!");
+                return NotFound(new {error = "Client not found!"});
             }
 
-            byte[] passwordHash = HashHelper.GenerateHash(login.password);
-            if (!passwordHash.SequenceEqual(client.Password))
-            {
-                return BadRequest("Invalid password");
-            }
+            //byte[] passwordHash = HashHelper.GenerateHash(login.password);
+            //if (!passwordHash.SequenceEqual(client.Password))
+            //{
+            //    return BadRequest("Invalid login or password");
+            //}
             string token = GenerateJWTToken(client);
             return Ok(new { token });
         }
         [NonAction]
         public string GenerateJWTToken(Client client)
         {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("82E88253ABB382A54AB9DB5FC55EA")); //TODO
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("df8f3c6058ce4d93b799b4d8dc0b5ff66e1eccf69aa29505c6c84a6339a914a4")); //TODO
             var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
