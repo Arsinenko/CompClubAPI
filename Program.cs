@@ -1,6 +1,9 @@
 
 using CompClubAPI.Models;
 using CompClubAPI.Controllers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace CompClubAPI
 {
@@ -17,6 +20,22 @@ namespace CompClubAPI
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "CompClubAPI",
+                    ValidAudience = "CompClubAPI",
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes("df8f3c6058ce4d93b799b4d8dc0b5ff66e1eccf69aa29505c6c84a6339a914a4")
+                    )
+                };
+            });
 
             var app = builder.Build();
             app.UseStaticFiles();
@@ -35,6 +54,7 @@ namespace CompClubAPI
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
 
             app.MapControllers();
 

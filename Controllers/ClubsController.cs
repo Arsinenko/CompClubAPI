@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CompClubAPI.Controllers
 {
@@ -21,6 +22,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Clubs
+        [Authorize(Roles = "Client")]
         [HttpGet("get_clubs")]
         public async Task<ActionResult<IEnumerable<Club>>> GetClubs()
         {

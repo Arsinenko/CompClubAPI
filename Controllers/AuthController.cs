@@ -52,7 +52,9 @@ namespace CompClubAPI.Controllers
                 {
                     new Claim("client_id", client.Id.ToString()),
                     new Claim("client_login", client.Login.ToString()),
+                    new Claim(ClaimTypes.Role, "Client")
                 },
+
                 expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: credentials
                 );
