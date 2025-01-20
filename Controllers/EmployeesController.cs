@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
 using CompClubAPI.Schemas;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CompClubAPI.Controllers
 {
@@ -88,6 +92,43 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
+        }
+
+        [HttpPost("auth")]
+        public IActionResult Auth(AuthEmployeeModel model)
+        {
+            byte[] passwordHash = HashHelper.GenerateHash(model.password);
+
+            Employee? employee = _context.Employees.FirstOrDefault(x => x.Login == model.login && x.Password == passwordHash);
+            if (employee == null)
+            {
+                return NotFound(new {error = "Client not found!"});
+            }
+
+            string token = GenerateJWTToken(employee);
+            return Ok(new { token });
+        }
+
+        [NonAction]
+        public string GenerateJWTToken(Employee employee)
+        {
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("df8f3c6058ce4d93b799b4d8dc0b5ff66e1eccf69aa29505c6c84a6339a914a4")); //TODO
+            var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: "CompClubAPI",
+                audience: "CompClubAPI",
+                claims: new[]
+                {
+                    new Claim("client_id", employee.Id.ToString()),
+                    new Claim("client_login", employee.Login.ToString()),
+                    new Claim(ClaimTypes.Role, "Employee")
+                },
+
+                expires: DateTime.UtcNow.AddMinutes(30),
+                signingCredentials: credentials
+            );
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         // DELETE: api/Employees/5

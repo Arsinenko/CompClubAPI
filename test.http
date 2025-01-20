@@ -1,0 +1,8 @@
+﻿### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=JetBrains Rider
+
+###
+
+GET http://localhost:8000/api/clubs/get_clubs HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiIyIiwiY2xpZW50X2xvZ2luIjoiS2ltIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ2xpZW50IiwiZXhwIjoxNzM3Mzg0OTAzLCJpc3MiOiJDb21wQ2x1YkFQSSIsImF1ZCI6IkNvbXBDbHViQVBJIn0.pEXr97VeI8MZFW1YpOYjusstFXSqY36OKtrdN9ePgJoz
