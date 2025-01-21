@@ -22,7 +22,6 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Clubs
-        [Authorize(Roles = "Client")]
         [HttpGet("get_clubs")]
         public async Task<ActionResult<IEnumerable<Club>>> GetClubs()
         {
@@ -45,6 +44,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Clubs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("update_club/{id}")]
         public async Task<IActionResult> PutClub(int id, Club club)
         {
@@ -76,6 +76,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Clubs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Employee")]
         [HttpPost("create_club")]
         public async Task<ActionResult<Club>> PostClub(Club club)
         {
@@ -86,6 +87,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/Clubs/5
+        [Authorize(Roles = "Employee")]
         [HttpDelete("delete_club{id}")]
         public async Task<IActionResult> DeleteClub(int id)
         {

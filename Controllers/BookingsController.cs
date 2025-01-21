@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CompClubAPI.Controllers
 {
@@ -21,6 +22,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Bookings
+        [Authorize(Roles = "Employee")]
         [HttpGet("get_bookings")]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
         {
@@ -28,6 +30,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Bookings/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Booking>> GetBooking(int id)
         {
@@ -43,6 +46,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Bookings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("update_boking/{id}")]
         public async Task<IActionResult> PutBooking(int id, Booking booking)
         {
@@ -74,6 +78,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Bookings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost("create_booking")]
         public async Task<ActionResult<Booking>> PostBooking(Booking booking)
         {
@@ -84,6 +89,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/Bookings/5
+        [Authorize]
         [HttpDelete("delete_booking{id}")]
         public async Task<IActionResult> DeleteBooking(int id)
         {

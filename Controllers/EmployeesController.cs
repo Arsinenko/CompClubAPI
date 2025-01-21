@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
 using CompClubAPI.Schemas;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CompClubAPI.Controllers
 {
@@ -26,6 +27,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Employees
+        [Authorize(Roles = "Employee")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
         {
@@ -33,6 +35,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Employees/5
+        [Authorize(Roles = "Employee")]
         [HttpGet("get_info/{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
@@ -48,6 +51,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Employee")]
         [HttpPut("update_info/{id}")]
         public async Task<IActionResult> PutEmployee(int id, Employee employee)
         {
@@ -79,6 +83,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Employees
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Employee")]
         [HttpPost("hire_employee")]
         public async Task<ActionResult<Employee>> PostEmployee(HireEmployeeModel model)
         {
@@ -132,6 +137,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/Employees/5
+        [Authorize(Roles = "Employee")]
         [HttpDelete("fire_employee/{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {

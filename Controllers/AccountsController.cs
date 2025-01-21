@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CompClubAPI.Controllers
 {
@@ -21,6 +22,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Accounts
+        [Authorize(Roles = "Employee")]
         [HttpGet("get_accounts")]
         public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
         {
@@ -28,6 +30,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Accounts/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Account>> GetAccount(int id)
         {
@@ -43,6 +46,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Accounts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("update_account/{id}")]
         public async Task<IActionResult> PutAccount(int id, Account account)
         {
@@ -74,6 +78,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Accounts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost("create_account")]
         public async Task<ActionResult<Account>> PostAccount(Account account)
         {
@@ -84,6 +89,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/Accounts/5
+        [Authorize]
         [HttpDelete("delete_account/{id}")]
         public async Task<IActionResult> DeleteAccount(int id)
         {
