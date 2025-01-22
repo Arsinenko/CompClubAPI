@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CompClubAPI.Controllers
 {
@@ -21,6 +22,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/EquipmentMaintenances
+        [Authorize(Roles = "Employee")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EquipmentMaintenance>>> GetEquipmentMaintenances()
         {
@@ -28,6 +30,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/EquipmentMaintenances/5
+        [Authorize(Roles = "Employee")]
         [HttpGet("{id}")]
         public async Task<ActionResult<EquipmentMaintenance>> GetEquipmentMaintenance(int id)
         {
@@ -43,6 +46,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/EquipmentMaintenances/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Employee")]
         [HttpPut("update_info/{id}")]
         public async Task<IActionResult> PutEquipmentMaintenance(int id, EquipmentMaintenance equipmentMaintenance)
         {
@@ -74,6 +78,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/EquipmentMaintenances
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost("create_report")]
         public async Task<ActionResult<EquipmentMaintenance>> PostEquipmentMaintenance(EquipmentMaintenance equipmentMaintenance)
         {
@@ -84,6 +89,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/EquipmentMaintenances/5
+        [Authorize(Roles = "Employee")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteEquipmentMaintenance(int id)
         {

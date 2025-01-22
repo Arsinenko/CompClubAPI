@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CompClubAPI.Controllers
 {
@@ -21,6 +22,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/WorkingSpaces
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WorkingSpace>>> GetWorkingSpaces()
         {
@@ -28,6 +30,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/WorkingSpaces/5
+        [Authorize]
         [HttpGet("get_status/{id}")]
         public async Task<ActionResult<WorkingSpace>> GetWorkingSpace(int id)
         {
@@ -43,6 +46,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/WorkingSpaces/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("update_status/{id}")]
         public async Task<IActionResult> PutWorkingSpace(int id, WorkingSpace workingSpace)
         {
@@ -74,6 +78,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/WorkingSpaces
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Employee")]
         [HttpPost("create_workspace")]
         public async Task<ActionResult<WorkingSpace>> PostWorkingSpace(WorkingSpace workingSpace)
         {
@@ -84,6 +89,7 @@ namespace CompClubAPI.Controllers
         }
 
         // DELETE: api/WorkingSpaces/5
+        [Authorize(Roles = "Employee")]
         [HttpDelete("delete_workspace/{id}")]
         public async Task<IActionResult> DeleteWorkingSpace(int id)
         {

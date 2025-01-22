@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CompClubAPI.Controllers
 {
@@ -21,6 +22,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Equipments
+        [Authorize]
         [HttpGet("equipments_list")]
         public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipment()
         {
@@ -28,6 +30,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Equipments/5
+        [Authorize]
         [HttpGet("equipment_data/{id}")]
         public async Task<ActionResult<Equipment>> GetEquipment(int id)
         {
@@ -43,6 +46,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Equipments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("update_data/{id}")]
         public async Task<IActionResult> PutEquipment(int id, Equipment equipment)
         {
@@ -74,6 +78,7 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Equipments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Employee")]
         [HttpPost("new_equipment")]
         public async Task<ActionResult<Equipment>> PostEquipment(Equipment equipment)
         {
