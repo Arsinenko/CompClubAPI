@@ -31,10 +31,12 @@ namespace CompClubAPI.Controllers
 
         // GET: api/Accounts/5
         [Authorize]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Account>> GetAccount(int id)
+        [HttpGet("get_info")]
+        public async Task<ActionResult<Account>> GetAccount()
         {
-            var account = await _context.Accounts.FindAsync(id);
+            int client_id = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+
+            var account = await _context.Accounts.Where(a => a.IdClient == client_id).FirstOrDefaultAsync();
 
             if (account == null)
             {

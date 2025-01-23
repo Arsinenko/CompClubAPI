@@ -37,7 +37,10 @@ namespace CompClubAPI.Controllers
             };
             _context.Add(client);
             await _context.SaveChangesAsync();
-            return Created();
+            Account account = new Account { IdClient = client.Id, Balance = 100 };
+            _context.Add(account);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
     }

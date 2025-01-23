@@ -31,4 +31,8 @@
     <_ContentIncludedByDefault Remove="Views\Clients\Index.cshtml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="data.http" />
+  </ItemGroup>
+
 </Project>
