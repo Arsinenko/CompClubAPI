@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -34,9 +29,9 @@ namespace CompClubAPI.Controllers
         [HttpGet("get_info")]
         public async Task<ActionResult<Account>> GetAccount()
         {
-            int client_id = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
 
-            var account = await _context.Accounts.Where(a => a.IdClient == client_id).FirstOrDefaultAsync();
+            var account = await _context.Accounts.Where(a => a.IdClient == clientId).FirstOrDefaultAsync();
 
             if (account == null)
             {

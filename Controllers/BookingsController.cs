@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -47,7 +42,7 @@ namespace CompClubAPI.Controllers
         // PUT: api/Bookings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
-        [HttpPut("update_boking/{id}")]
+        [HttpPut("update_booking/{id}")]
         public async Task<IActionResult> PutBooking(int id, Booking booking)
         {
             if (id != booking.Id)
@@ -90,7 +85,7 @@ namespace CompClubAPI.Controllers
 
         // DELETE: api/Bookings/5
         [Authorize]
-        [HttpDelete("delete_booking{id}")]
+        [HttpDelete("delete_booking/{id}")]
         public async Task<IActionResult> DeleteBooking(int id)
         {
             var booking = await _context.Bookings.FindAsync(id);

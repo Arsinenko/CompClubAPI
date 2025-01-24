@@ -36,11 +36,11 @@ namespace CompClubAPI.Controllers
             //{
             //    return BadRequest("Invalid login or password");
             //}
-            string token = GenerateJWTToken(client);
+            string token = GenerateJwtToken(client);
             return Ok(new { token });
         }
         [NonAction]
-        public string GenerateJWTToken(Client client)
+        public string GenerateJwtToken(Client client)
         {
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("df8f3c6058ce4d93b799b4d8dc0b5ff66e1eccf69aa29505c6c84a6339a914a4")); //TODO
             var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);

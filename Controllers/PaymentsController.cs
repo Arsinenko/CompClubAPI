@@ -30,15 +30,16 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Payments/5
-        [Authorize]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Payment>> GetPayment(int id)
+        [Authorize(Roles = "Client")]
+        [HttpGet("get_info")]
+        public async Task<ActionResult<Payment>> GetPayment()
         {
-            var payment = await _context.Payments.FindAsync(id);
+            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+            var payment = await _context.Payments.Where(p => p.ClientId == clientId).FirstOrDefaultAsync();
 
             if (payment == null)
             {
-                return NotFound();
+                return NotFound(new {error = "Payment not found!"});
             }
 
             return payment;
@@ -47,7 +48,7 @@ namespace CompClubAPI.Controllers
         // PUT: api/Payments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
-        [HttpPut("{id}")]
+        [HttpPut("update")]
         public async Task<IActionResult> PutPayment(int id, Payment payment)
         {
             if (id != payment.Id)
