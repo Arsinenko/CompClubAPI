@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
 using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CompClubAPI.Controllers
 {
@@ -31,85 +25,76 @@ namespace CompClubAPI.Controllers
             return await _context.Payments.ToListAsync();
         }
 
-        // // GET: api/Payments/5
-        // [Authorize(Roles = "Client")]
-        // [HttpGet("get_info")]
-        // public async Task<ActionResult<Payment>> GetPayment()
-        // {
-        //     int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
-        //     var payment = await _context.Payments.Where(p => p.ClientId == clientId).FirstOrDefaultAsync();
-        //
-        //     if (payment == null)
-        //     {
-        //         return NotFound(new {error = "Payment not found!"});
-        //     }
-        //
-        //     return Ok(new { cardNumber = AesEncryption.Decrypt(payment.EncryptedCardNumber), cvv = AesEncryption.Decrypt(payment.EncryptedCvv), date = payment.LinkDate })>;
-        // }
-
-        // PUT: api/Payments/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize]
-        [HttpPut("update")]
-        public async Task<IActionResult> PutPayment(int id, Payment payment)
+        // GET: api/Payments/5
+        [Authorize(Roles = "Client")]
+        [HttpGet("get_info")]
+        public async Task<ActionResult<Payment>> GetPayment()
         {
-            if (id != payment.Id)
+            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+            var payment = await _context.Payments.Where(p => p.ClientId == clientId).FirstOrDefaultAsync();
+        
+            if (payment == null)
             {
-                return BadRequest();
+                return NotFound(new {error = "Payment not found!"});
             }
-
-            _context.Entry(payment).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PaymentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+        
+            return Ok(new { id = payment.Id, cardNumber = AesEncryption.Decrypt(payment.EncryptedCardNumber), cvv = AesEncryption.Decrypt(payment.EncryptedCvv), date = payment.LinkDate });
         }
+
 
         // POST: api/Payments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Client")]
         [HttpPost("create")]
-        public async Task<ActionResult<Payment>> PostPayment(CreatePaymentModel paymentModel)
+        public async Task<ActionResult> PostPayment(CreatePaymentModel paymentModel)
         {
-            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
-            Payment payment = new Payment
+            try
             {
-                ClientId = clientId,
-                EncryptedCardNumber = AesEncryption.Encrypt(paymentModel.CardNumber),
-                EncryptedCvv = AesEncryption.Encrypt(paymentModel.Cvv),
-                LinkDate = paymentModel.Date,
-            };
-            _context.Payments.Add(payment);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPayment", new { id = payment.Id });
+                int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+                var paymentExists = await _context.Payments.Where(p => p.ClientId == clientId).FirstOrDefaultAsync();
+                
+                if (paymentExists == null)
+                {
+                    Payment payment = new Payment
+                    {
+                        
+                        ClientId = clientId,
+                        EncryptedCardNumber = AesEncryption.Encrypt(paymentModel.CardNumber),
+                        EncryptedCvv = AesEncryption.Encrypt(paymentModel.Cvv),
+                        LinkDate = DateOnly.FromDateTime(DateTime.Now)
+                        
+                    };
+                    _context.Payments.Add(payment);
+                    await _context.SaveChangesAsync();
+                    return Created("", new { id = payment.Id});
+                }
+                
+                paymentExists.EncryptedCardNumber = AesEncryption.Encrypt(paymentModel.CardNumber);
+                paymentExists.EncryptedCvv = AesEncryption.Encrypt(paymentModel.Cvv);
+                paymentExists.LinkDate = DateOnly.FromDateTime(DateTime.Now);
+                
+                _context.Payments.Update(paymentExists);
+                await _context.SaveChangesAsync();
+                
+                return Ok( new { id = paymentExists.Id });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
         }
 
         // DELETE: api/Payments/5
         [Authorize]
-        [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> DeletePayment(int id)
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeletePayment()
         {
-            var payment = await _context.Payments.FindAsync(id);
+            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+            Payment? payment = await _context.Payments.Where(p => p.ClientId == clientId).FirstOrDefaultAsync();
             if (payment == null)
             {
-                return NotFound();
+                return BadRequest(new { error = "Payment not found!" });
             }
-
             _context.Payments.Remove(payment);
             await _context.SaveChangesAsync();
 
