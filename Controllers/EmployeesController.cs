@@ -90,7 +90,7 @@ namespace CompClubAPI.Controllers
             byte[] password = HashHelper.GenerateHash(model.password);
             Employee employee = new Employee
             {
-                Login = model.login, Password = password, PassportData = model.passpordData, HireDate = model.hire_date,
+                Login = model.login, Password = password, PassportData = model.passpordData, HireDate = model.hireDate,
                 IdRole = model.idRole, Salary = model.salary,IdClub = model.idClub
             };
             _context.Employees.Add(employee);

@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
+using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CompClubAPI.Controllers
 {
@@ -29,21 +31,21 @@ namespace CompClubAPI.Controllers
             return await _context.Payments.ToListAsync();
         }
 
-        // GET: api/Payments/5
-        [Authorize(Roles = "Client")]
-        [HttpGet("get_info")]
-        public async Task<ActionResult<Payment>> GetPayment()
-        {
-            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
-            var payment = await _context.Payments.Where(p => p.ClientId == clientId).FirstOrDefaultAsync();
-
-            if (payment == null)
-            {
-                return NotFound(new {error = "Payment not found!"});
-            }
-
-            return payment;
-        }
+        // // GET: api/Payments/5
+        // [Authorize(Roles = "Client")]
+        // [HttpGet("get_info")]
+        // public async Task<ActionResult<Payment>> GetPayment()
+        // {
+        //     int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+        //     var payment = await _context.Payments.Where(p => p.ClientId == clientId).FirstOrDefaultAsync();
+        //
+        //     if (payment == null)
+        //     {
+        //         return NotFound(new {error = "Payment not found!"});
+        //     }
+        //
+        //     return Ok(new { cardNumber = AesEncryption.Decrypt(payment.EncryptedCardNumber), cvv = AesEncryption.Decrypt(payment.EncryptedCvv), date = payment.LinkDate })>;
+        // }
 
         // PUT: api/Payments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -79,14 +81,22 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Payments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize]
+        [Authorize(Roles = "Client")]
         [HttpPost("create")]
-        public async Task<ActionResult<Payment>> PostPayment(Payment payment)
+        public async Task<ActionResult<Payment>> PostPayment(CreatePaymentModel paymentModel)
         {
+            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+            Payment payment = new Payment
+            {
+                ClientId = clientId,
+                EncryptedCardNumber = AesEncryption.Encrypt(paymentModel.CardNumber),
+                EncryptedCvv = AesEncryption.Encrypt(paymentModel.Cvv),
+                LinkDate = paymentModel.Date,
+            };
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPayment", new { id = payment.Id }, payment);
+            return CreatedAtAction("GetPayment", new { id = payment.Id });
         }
 
         // DELETE: api/Payments/5

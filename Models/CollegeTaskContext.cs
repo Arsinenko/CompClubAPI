@@ -327,10 +327,10 @@ public partial class CollegeTaskContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ClientId).HasColumnName("client_id");
             entity.Property(e => e.EncryptedCardNumber)
-                .HasMaxLength(256)
+                .HasMaxLength(32)
                 .HasColumnName("encrypted_card_number");
             entity.Property(e => e.EncryptedCvv)
-                .HasMaxLength(265)
+                .HasMaxLength(32)
                 .HasColumnName("encrypted_CVV");
             entity.Property(e => e.LinkDate)
                 .HasDefaultValueSql("(getdate())")

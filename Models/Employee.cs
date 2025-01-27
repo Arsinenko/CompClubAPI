@@ -15,7 +15,7 @@ public partial class Employee
 
     public string PassportData { get; set; } = null!;
 
-    public DateOnly? HireDate { get; set; }
+    public DateOnly HireDate { get; set; }
 
     public int IdRole { get; set; }
 
