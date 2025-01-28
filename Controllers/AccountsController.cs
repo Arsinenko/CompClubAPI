@@ -60,7 +60,7 @@ namespace CompClubAPI.Controllers
             account.Balance += accountModel.Balance;
             _context.Update(account);
             await _context.SaveChangesAsync();
-            UserActionLog log = new UserActionLog
+            BalanceHistory log = new BalanceHistory
             {
                 ClientId = clientId,
                 Action = "add_balance",
