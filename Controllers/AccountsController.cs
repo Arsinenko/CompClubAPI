@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
+using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
 
 namespace CompClubAPI.Controllers
@@ -43,7 +45,26 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Accounts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize]
+        [Authorize(Roles = "Client")]
+        [HttpPut("update_account/")]
+        public async Task<IActionResult> PutAccount(CreateAccountModel accountModel)
+        {
+            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+            
+            Account? account = await _context.Accounts.Where(a => a.IdClient == clientId).FirstOrDefaultAsync();
+            if (account == null)
+            {
+                return BadRequest(new { error = "Account not found!" });
+            }
+
+            account.Balance = accountModel.Balance;
+            _context.Update(account);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Account updated successfully!" });
+
+        }
+        
+        [Authorize(Roles = "Employee")]
         [HttpPut("update_account/{id}")]
         public async Task<IActionResult> PutAccount(int id, Account account)
         {
@@ -70,7 +91,7 @@ namespace CompClubAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(new { message = "Account updated successfully!" });
         }
 
         // POST: api/Accounts
