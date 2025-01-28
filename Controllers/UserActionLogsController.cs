@@ -26,16 +26,13 @@ namespace CompClubAPI.Controllers
 
         // GET: api/UserActionLogs/5
         [Authorize(Roles = "Client")]
-        [HttpGet("get_logs")]
-        public async Task<IActionResult> GetUserActionLog()
+        [HttpGet("get_balance_history")]
+        public async Task<IActionResult> GetBalanceHistory()
         {
             int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
-            var userActionLogs = await _context.UserActionLogs.Where(log => log.ClientId == clientId).ToListAsync();
-            if (userActionLogs == null)
-            {
-                return NotFound(new {message = "there is no logs"});
-            }
-            return Ok(userActionLogs);
+            var balanceHistory = await _context.UserActionLogs.Where(log =>
+                log.ClientId == clientId).ToListAsync();
+            return Ok(balanceHistory);
         }
 
         // PUT: api/UserActionLogs/5
