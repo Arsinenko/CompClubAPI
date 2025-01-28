@@ -33,7 +33,7 @@ public partial class CollegeTaskContext : DbContext
 
     [JsonIgnore] public virtual DbSet<EquipmentStatus> EquipmentStatuses { get; set; }
 
-    [JsonIgnore] public virtual DbSet<Feedback> Feedbacks { get; set; }
+    [JsonIgnore] public virtual DbSet<Feedback?> Feedbacks { get; set; }
 
     [JsonIgnore] public virtual DbSet<Game> Games { get; set; }
 

@@ -27,7 +27,7 @@ namespace CompClubAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Feedback>>> GetFeedbacks()
         {
-            var results = from feedback in _context.Feedbacks
+            var results = await (from feedback in _context.Feedbacks
                 join client in _context.Clients on feedback.IdClient equals client.Id
                 select new
                 {
@@ -36,7 +36,7 @@ namespace CompClubAPI.Controllers
                     comment = feedback.Comment,
                     login = client.Login,
         
-                };
+                }).ToListAsync();
             return Ok(results);
         }
 
@@ -44,45 +44,41 @@ namespace CompClubAPI.Controllers
         [HttpGet("get_info/{id}")]
         public async Task<ActionResult<Feedback>> GetFeedback(int id)
         {
-            var feedback = await _context.Feedbacks.FindAsync(id);
+            var result = await (from feedback in _context.Feedbacks
+                join client in  _context.Clients on feedback.IdClient equals client.Id
+                where feedback.Id == id select new
+                {
+                    id = feedback.Id, rating = feedback.Rating, comment = feedback.Comment, login = client.Login
+                }).FirstOrDefaultAsync();
 
-            if (feedback == null)
+            if (result == null)
             {
                 return NotFound();
             }
 
-            return Ok( new { id = feedback.Id, rating = feedback.Rating, comment = feedback.Comment });
+            return Ok(result);
         }
         [Authorize]
         // PUT: api/Feedbacks/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> PutFeedback(int id, Feedback feedback)
+        public async Task<IActionResult> PutFeedback(int id, CreateFeedbackModel createFeedbackModel)
         {
-            if (id != feedback.Id)
+            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+            Feedback? feedbackResult = await _context.Feedbacks.Where(f => f.IdClient == clientId && f.Id == id).FirstOrDefaultAsync();
+
+            if (feedbackResult == null)
             {
-                return BadRequest();
+                return BadRequest(new { error = "Feedback not found or it not yours!" });
             }
 
-            _context.Entry(feedback).State = EntityState.Modified;
+            feedbackResult.Rating = createFeedbackModel.rating;
+            feedbackResult.Comment = createFeedbackModel.comment;
+            _context.Feedbacks.Update(feedbackResult);
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FeedbackExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(new {message = $"feedback with id {id} updated!"});
+            
         }
 
         // POST: api/Feedbacks
@@ -92,7 +88,7 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult<Feedback>> PostFeedback(CreateFeedbackModel feedbackModel)
         {
             int idClient = Convert.ToInt32(User.FindFirst("client_id")?.Value);
-            Feedback feedback = new Feedback
+            Feedback? feedback = new Feedback
             {
                 IdClient = idClient,
                 IdClub = feedbackModel.clubId,
