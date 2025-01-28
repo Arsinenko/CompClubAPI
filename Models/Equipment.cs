@@ -25,11 +25,13 @@ public partial class Equipment
 
     public int? Quantity { get; set; }
 
+    public int? IdWorkingSpace { get; set; }
+
     [JsonIgnore] public virtual ICollection<EquipmentMaintenance> EquipmentMaintenances { get; set; } = new List<EquipmentMaintenance>();
 
     [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;
 
-    [JsonIgnore] public virtual EquipmentStatus StatusNavigation { get; set; } = null!;
+    [JsonIgnore] public virtual WorkingSpace? IdWorkingSpaceNavigation { get; set; }
 
-    [JsonIgnore] public virtual ICollection<WorkingSpace> WorkingSpaces { get; set; } = new List<WorkingSpace>();
+    [JsonIgnore] public virtual EquipmentStatus StatusNavigation { get; set; } = null!;
 }

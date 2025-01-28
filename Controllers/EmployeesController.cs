@@ -83,14 +83,14 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Employees
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Employee")]
+        
         [HttpPost("hire_employee")]
         public async Task<ActionResult<Employee>> PostEmployee(HireEmployeeModel model)
         {
             byte[] password = HashHelper.GenerateHash(model.password);
             Employee employee = new Employee
             {
-                Login = model.login, Password = password, PassportData = model.passpordData, HireDate = model.hireDate,
+                Login = model.login, Password = password, PassportData = model.passpordData, HireDate = DateOnly.FromDateTime(DateTime.Now),
                 IdRole = model.idRole, Salary = model.salary,IdClub = model.idClub
             };
             _context.Employees.Add(employee);

@@ -33,7 +33,7 @@ public partial class CollegeTaskContext : DbContext
 
     [JsonIgnore] public virtual DbSet<EquipmentStatus> EquipmentStatuses { get; set; }
 
-    [JsonIgnore] public virtual DbSet<Feedback?> Feedbacks { get; set; }
+    [JsonIgnore] public virtual DbSet<Feedback> Feedbacks { get; set; }
 
     [JsonIgnore] public virtual DbSet<Game> Games { get; set; }
 
@@ -196,6 +196,7 @@ public partial class CollegeTaskContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.IdClub).HasColumnName("id_club");
+            entity.Property(e => e.IdWorkingSpace).HasColumnName("idWorkingSpace");
             entity.Property(e => e.Name)
                 .HasMaxLength(80)
                 .HasColumnName("_name");
@@ -218,6 +219,10 @@ public partial class CollegeTaskContext : DbContext
                 .HasForeignKey(d => d.IdClub)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Equipment__id_cl__40F9A68C");
+
+            entity.HasOne(d => d.IdWorkingSpaceNavigation).WithMany(p => p.Equipment)
+                .HasForeignKey(d => d.IdWorkingSpace)
+                .HasConstraintName("FK__Equipment__idWor__73852659");
 
             entity.HasOne(d => d.StatusNavigation).WithMany(p => p.Equipment)
                 .HasForeignKey(d => d.Status)
@@ -406,15 +411,9 @@ public partial class CollegeTaskContext : DbContext
             entity.ToTable("WorkingSpace");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.IdEquipment).HasColumnName("id_equipment");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
                 .HasColumnName("status");
-
-            entity.HasOne(d => d.IdEquipmentNavigation).WithMany(p => p.WorkingSpaces)
-                .HasForeignKey(d => d.IdEquipment)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WorkingSp__id_eq__55F4C372");
         });
 
         OnModelCreatingPartial(modelBuilder);

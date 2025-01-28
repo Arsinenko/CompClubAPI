@@ -38,7 +38,11 @@ namespace CompClubAPI.Controllers
                 return NotFound(new {error = "Payment not found!"});
             }
         
-            return Ok(new { id = payment.Id, cardNumber = AesEncryption.Decrypt(payment.EncryptedCardNumber), cvv = AesEncryption.Decrypt(payment.EncryptedCvv), date = payment.LinkDate });
+            return Ok(new
+            {
+                id = payment.Id, cardNumber = AesEncryption.Decrypt(payment.EncryptedCardNumber),
+                cvv = AesEncryption.Decrypt(payment.EncryptedCvv), date = payment.LinkDate
+            });
         }
 
 
