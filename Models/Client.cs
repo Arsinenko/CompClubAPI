@@ -27,5 +27,5 @@ public partial class Client
 
     [JsonIgnore] public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
-    [JsonIgnore] public virtual ICollection<UserActionLog> UserActionLogs { get; set; } = new List<UserActionLog>();
+    [JsonIgnore] public virtual ICollection<BalanceHistory> UserActionLogs { get; set; } = new List<BalanceHistory>();
 }

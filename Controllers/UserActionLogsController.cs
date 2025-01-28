@@ -24,7 +24,7 @@ namespace CompClubAPI.Controllers
         // GET: api/UserActionLogs
         [Authorize(Roles = "Employee")]
         [HttpGet("get_userlogs")]
-        public async Task<ActionResult<IEnumerable<UserActionLog>>> GetUserActionLogs()
+        public async Task<ActionResult<IEnumerable<BalanceHistory>>> GetUserActionLogs()
         {
             return await _context.UserActionLogs.ToListAsync();
         }
@@ -32,7 +32,7 @@ namespace CompClubAPI.Controllers
         // GET: api/UserActionLogs/5
         [Authorize(Roles = "Employee")]
         [HttpGet("get_log/{id}")]
-        public async Task<ActionResult<UserActionLog>> GetUserActionLog(int id)
+        public async Task<ActionResult<BalanceHistory>> GetUserActionLog(int id)
         {
             var userActionLog = await _context.UserActionLogs.FindAsync(id);
 
@@ -47,14 +47,14 @@ namespace CompClubAPI.Controllers
         // PUT: api/UserActionLogs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("update_log/{id}")]
-        public async Task<IActionResult> PutUserActionLog(int id, UserActionLog userActionLog)
+        public async Task<IActionResult> PutUserActionLog(int id, BalanceHistory balanceHistory)
         {
-            if (id != userActionLog.Id)
+            if (id != balanceHistory.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(userActionLog).State = EntityState.Modified;
+            _context.Entry(balanceHistory).State = EntityState.Modified;
 
             try
             {
@@ -78,12 +78,12 @@ namespace CompClubAPI.Controllers
         // POST: api/UserActionLogs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("create_log")]
-        public async Task<ActionResult<UserActionLog>> PostUserActionLog(UserActionLog userActionLog)
+        public async Task<ActionResult<BalanceHistory>> PostUserActionLog(BalanceHistory balanceHistory)
         {
-            _context.UserActionLogs.Add(userActionLog);
+            _context.UserActionLogs.Add(balanceHistory);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUserActionLog", new { id = userActionLog.Id }, userActionLog);
+            return CreatedAtAction("GetUserActionLog", new { id = balanceHistory.Id }, balanceHistory);
         }
 
         

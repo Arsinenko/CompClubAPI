@@ -45,7 +45,7 @@ public partial class CollegeTaskContext : DbContext
 
     [JsonIgnore] public virtual DbSet<Shift> Shifts { get; set; }
 
-    [JsonIgnore] public virtual DbSet<UserActionLog> UserActionLogs { get; set; }
+    [JsonIgnore] public virtual DbSet<BalanceHistory> UserActionLogs { get; set; }
 
     [JsonIgnore] public virtual DbSet<WorkingSpace> WorkingSpaces { get; set; }
 
@@ -380,11 +380,11 @@ public partial class CollegeTaskContext : DbContext
                 .HasConstraintName("FK__Shift__id_employ__4F47C5E3");
         });
 
-        modelBuilder.Entity<UserActionLog>(entity =>
+        modelBuilder.Entity<BalanceHistory>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__UserActi__3213E83FB68F2708");
 
-            entity.ToTable("UserActionLog");
+            entity.ToTable("BalanceHistory");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Action)

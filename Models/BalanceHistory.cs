@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 
-public partial class UserActionLog
+public partial class BalanceHistory
 {
     public int Id { get; set; }
 

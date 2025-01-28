@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
+using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
 
 namespace CompClubAPI.Controllers
@@ -41,16 +42,25 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Bookings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize]
+        [Authorize(Roles = "Client")]
         [HttpPut("update_booking/{id}")]
         public async Task<IActionResult> PutBooking(int id, Booking booking)
         {
-            if (id != booking.Id)
+            int clientID = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+            Booking? bookingResult = await _context.Bookings.Where(b => b.IdClient == clientID && b.Id == id).FirstOrDefaultAsync();
+
+            if (bookingResult == null)
             {
-                return BadRequest();
+                return BadRequest(new { error = "Booking not found or it not yours!" });
             }
 
-            _context.Entry(booking).State = EntityState.Modified;
+            bookingResult.StartTime = booking.StartTime;
+            bookingResult.EndTime = booking.EndTime;
+            bookingResult.TotalCost = booking.TotalCost;
+            bookingResult.Status = booking.Status;
+            bookingResult.PaymentMethod = booking.PaymentMethod;
+
+            _context.Entry(bookingResult).State = EntityState.Modified;
 
             try
             {
@@ -73,10 +83,22 @@ namespace CompClubAPI.Controllers
 
         // POST: api/Bookings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize]
+        [Authorize(Roles = "Client")]
         [HttpPost("create_booking")]
-        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
+        public async Task<ActionResult<Booking>> PostBooking(CreateBookingModel bookingModel)
         {
+            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+
+            var booking = new Booking
+            {
+                IdClient = clientId,
+                StartTime = bookingModel.StartTime,
+                EndTime = bookingModel.EndTime,
+                TotalCost = bookingModel.TotalCost,
+                Status = bookingModel.Status,
+                PaymentMethod = bookingModel.PaymentMethod
+            };
+            
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 

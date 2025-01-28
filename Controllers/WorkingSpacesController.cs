@@ -82,10 +82,19 @@ namespace CompClubAPI.Controllers
         [HttpPost("create_workspace")]
         public async Task<ActionResult<WorkingSpace>> PostWorkingSpace(WorkingSpace workingSpace)
         {
-            _context.WorkingSpaces.Add(workingSpace);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.WorkingSpaces.Add(workingSpace);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetWorkingSpace", new { id = workingSpace.Id }, workingSpace);
+                return CreatedAtAction("GetWorkingSpace", new { id = workingSpace.Id }, workingSpace);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
         }
 
         // DELETE: api/WorkingSpaces/5
