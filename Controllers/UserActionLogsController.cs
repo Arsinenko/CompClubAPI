@@ -12,36 +12,30 @@ namespace CompClubAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserActionLogsController : ControllerBase
+    public class UserActionLogsController(CollegeTaskContext context) : ControllerBase
     {
-        private readonly CollegeTaskContext _context;
-
-        public UserActionLogsController(CollegeTaskContext context)
-        {
-            _context = context;
-        }
+        private readonly CollegeTaskContext _context = context;
 
         // GET: api/UserActionLogs
         [Authorize(Roles = "Employee")]
-        [HttpGet("get_userlogs")]
+        [HttpGet("get_user_logs")]
         public async Task<ActionResult<IEnumerable<UserActionLog>>> GetUserActionLogs()
         {
             return await _context.UserActionLogs.ToListAsync();
         }
 
         // GET: api/UserActionLogs/5
-        [Authorize(Roles = "Employee")]
-        [HttpGet("get_log/{id}")]
-        public async Task<ActionResult<UserActionLog>> GetUserActionLog(int id)
+        [Authorize(Roles = "Client")]
+        [HttpGet("get_logs")]
+        public async Task<IActionResult> GetUserActionLog()
         {
-            var userActionLog = await _context.UserActionLogs.FindAsync(id);
-
-            if (userActionLog == null)
+            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+            var userActionLogs = await _context.UserActionLogs.Where(log => log.ClientId == clientId).ToListAsync();
+            if (userActionLogs == null)
             {
-                return NotFound();
+                return NotFound(new {message = "there is no logs"});
             }
-
-            return userActionLog;
+            return Ok(userActionLogs);
         }
 
         // PUT: api/UserActionLogs/5

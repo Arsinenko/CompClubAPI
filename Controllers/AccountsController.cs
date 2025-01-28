@@ -46,7 +46,7 @@ namespace CompClubAPI.Controllers
         // PUT: api/Accounts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Client")]
-        [HttpPut("update_account/")]
+        [HttpPut("add_balance/")]
         public async Task<IActionResult> PutAccount(CreateAccountModel accountModel)
         {
             int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
@@ -57,8 +57,16 @@ namespace CompClubAPI.Controllers
                 return BadRequest(new { error = "Account not found!" });
             }
 
-            account.Balance = accountModel.Balance;
+            account.Balance += accountModel.Balance;
             _context.Update(account);
+            await _context.SaveChangesAsync();
+            UserActionLog log = new UserActionLog
+            {
+                ClientId = clientId,
+                Action = "add_balance",
+                Price = accountModel.Balance
+            };
+            _context.UserActionLogs.Add(log);
             await _context.SaveChangesAsync();
             return Ok(new { message = "Account updated successfully!" });
 
