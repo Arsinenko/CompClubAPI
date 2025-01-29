@@ -80,7 +80,7 @@ namespace CompClubAPI.Controllers
         // POST: api/Account
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("create_account")]
-        public async Task<ActionResult<Account>> PostAccount(CreateAccountModel accountModel)
+        public async Task<ActionResult<Account>> CreateAccount(CreateAccountModel accountModel)
         {
             Account account = new Account
             {
@@ -129,21 +129,27 @@ namespace CompClubAPI.Controllers
         }
 
 
-        // DELETE: api/Account/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAccount(int id)
-        {
-            var account = await _context.Accounts.FindAsync(id);
-            if (account == null)
-            {
-                return NotFound();
-            }
-
-            _context.Accounts.Remove(account);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
+        // // DELETE: api/Account/5
+        // [HttpPost("deactivate")]
+        // public async Task<IActionResult> DeactivateAccount()
+        // {
+        //     int clientId = int.Parse(User.Claims.First(c => c.Type == "client_id").Value);
+        //     Account? account = await _context.Accounts.Where(a => a.IdClient == clientId).FirstOrDefaultAsync();
+        //     if (account == null)
+        //     {
+        //         return NotFound(new {message = "Account not found"});
+        //     }
+        //     Client? client = await _context.Clients.Where(c => c.Id == clientId).FirstOrDefaultAsync();
+        //     if (client == null)
+        //     {
+        //         return NotFound(new { message = "Client not found!" });
+        //     }
+        //     account.UpdatedAt = DateTime.Now;
+        //     account.IsActive = false;
+        //     _context.Accounts.Update(account);
+        //     await _context.SaveChangesAsync();
+        //     return Ok(new {message = $"Deactivated account {account.Id}, Deactivated client with id {clientId}"});
+        // }
 
         private bool AccountExists(int id)
         {
