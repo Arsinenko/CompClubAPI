@@ -95,21 +95,15 @@ namespace CompClubAPI.Controllers
             return CreatedAtAction("GetAccount", new { id = account.Id }, account);
         }
         [HttpPost("authentication")]
-        public IActionResult Login(AuthModel login)
+        public IActionResult AuthClient(AuthModel authModel)
         {
-            byte[] passwordHash = HashHelper.GenerateHash(login.password);
+            byte[] passwordHash = HashHelper.GenerateHash(authModel.password);
 
-            Account? account = _context.Accounts.FirstOrDefault(a => a.Login == login.login && a.Password.SequenceEqual(passwordHash));
+            Account? account = _context.Accounts.FirstOrDefault(a => a.Login == authModel.login && a.Password.SequenceEqual(passwordHash));
             if (account == null)
             {
                 return NotFound(new {error = "Client not found!"});
             }
-
-            //byte[] passwordHash = HashHelper.GenerateHash(login.password);
-            //if (!passwordHash.SequenceEqual(client.Password))
-            //{
-            //    return BadRequest("Invalid login or password");
-            //}
             string token = GenerateJwtToken(account);
             return Ok(new { token });
         }

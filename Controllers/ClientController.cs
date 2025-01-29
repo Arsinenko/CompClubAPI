@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
 using CompClubAPI.Schemas;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CompClubAPI.Controllers
 {
@@ -22,6 +23,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Client
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Client>>> GetClients()
         {
@@ -44,33 +46,24 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Client/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutClient(int id, Client client)
+        [HttpPut("update_client")]
+        public async Task<IActionResult> PutClient(int id, CreateClient clientModel)
         {
-            if (id != client.Id)
+            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+            Client? client = await _context.Clients.Where(c => c.Id == clientId).FirstOrDefaultAsync();
+            if (client == null)
             {
-                return BadRequest();
+                return NotFound( new {message = "Client not found!"});
             }
 
-            _context.Entry(client).State = EntityState.Modified;
+            client.FirstName = clientModel.FirstName;
+            client.MiddleName = clientModel.MiddleName;
+            client.LastName = clientModel.LastName;
+            client.UpdatedAt = DateTime.Now;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClientExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            _context.Clients.Update(client);
+            await _context.SaveChangesAsync();
+            return Ok(new {message = $"Client with id {client.Id} updated successfully!"});
         }
 
         // POST: api/Client
@@ -88,23 +81,7 @@ namespace CompClubAPI.Controllers
             _context.Clients.Add(client);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetClient", new { id = client.Id }, client);
-        }
-
-        // DELETE: api/Client/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteClient(int id)
-        {
-            var client = await _context.Clients.FindAsync(id);
-            if (client == null)
-            {
-                return NotFound();
-            }
-
-            _context.Clients.Remove(client);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Created("", new {message = "Client created successfully!", id = client.Id});
         }
 
         private bool ClientExists(int id)
