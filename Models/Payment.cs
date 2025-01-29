@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using System.Text.Json.Serialization;
-
 namespace CompClubAPI.Models;
 
 public partial class Payment
@@ -17,5 +15,7 @@ public partial class Payment
 
     public int ClientId { get; set; }
 
-    [JsonIgnore] public virtual Client Client { get; set; } = null!;
+    public int PaymentMethodId { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
 }

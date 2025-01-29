@@ -36,4 +36,8 @@
     <Content Include="data.http" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

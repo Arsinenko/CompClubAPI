@@ -1,5 +1,5 @@
 using CompClubAPI.Models;
-using CompClubAPI.Controllers;
+// using CompClubAPI.Controllers;Controllers
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
