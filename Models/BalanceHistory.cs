@@ -9,8 +9,6 @@ public partial class BalanceHistory
 {
     public int Id { get; set; }
 
-    public int? ClientId { get; set; }
-
     public string? Action { get; set; }
 
     public DateTime? ActionDate { get; set; }
@@ -21,5 +19,7 @@ public partial class BalanceHistory
 
     public DateTime? CreatedAt { get; set; }
 
-    [JsonIgnore] public virtual Client? Client { get; set; }
+    public int AccountId { get; set; }
+
+    [JsonIgnore] public virtual Account Account { get; set; } = null!;
 }

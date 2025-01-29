@@ -109,9 +109,8 @@ public partial class CollegeTaskContext : DbContext
 
             entity.ToTable("BalanceHistory");
 
-            entity.HasIndex(e => e.ClientId, "IX_BalanceHistory_client_id");
-
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.Action)
                 .HasMaxLength(50)
                 .HasColumnName("action");
@@ -119,7 +118,6 @@ public partial class CollegeTaskContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("action_date");
-            entity.Property(e => e.ClientId).HasColumnName("client_id");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -131,9 +129,10 @@ public partial class CollegeTaskContext : DbContext
                 .HasColumnType("money")
                 .HasColumnName("price");
 
-            entity.HasOne(d => d.Client).WithMany(p => p.BalanceHistories)
-                .HasForeignKey(d => d.ClientId)
-                .HasConstraintName("FK__BalanceHi__clien__4AB81AF0");
+            entity.HasOne(d => d.Account).WithMany(p => p.BalanceHistories)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__BalanceHi__accou__0F624AF8");
         });
 
         modelBuilder.Entity<Booking>(entity =>
@@ -142,11 +141,10 @@ public partial class CollegeTaskContext : DbContext
 
             entity.ToTable("Booking");
 
-            entity.HasIndex(e => e.IdClient, "IX_Booking_id_client");
-
             entity.HasIndex(e => e.IdWorkingSpace, "IX_Booking_id_working_space");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -154,7 +152,6 @@ public partial class CollegeTaskContext : DbContext
             entity.Property(e => e.EndTime)
                 .HasColumnType("datetime")
                 .HasColumnName("end_time");
-            entity.Property(e => e.IdClient).HasColumnName("id_client");
             entity.Property(e => e.IdPaymentMethod).HasColumnName("id_payment_method");
             entity.Property(e => e.IdStatus).HasColumnName("id_status");
             entity.Property(e => e.IdWorkingSpace).HasColumnName("id_working_space");
@@ -169,10 +166,10 @@ public partial class CollegeTaskContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("updated_at");
 
-            entity.HasOne(d => d.IdClientNavigation).WithMany(p => p.Bookings)
-                .HasForeignKey(d => d.IdClient)
+            entity.HasOne(d => d.Account).WithMany(p => p.Bookings)
+                .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Booking__id_clie__70DDC3D8");
+                .HasConstraintName("FK__Booking__account__160F4887");
 
             entity.HasOne(d => d.IdPaymentMethodNavigation).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.IdPaymentMethod)
@@ -440,11 +437,10 @@ public partial class CollegeTaskContext : DbContext
 
             entity.ToTable("Feedback");
 
-            entity.HasIndex(e => e.IdClient, "IX_Feedback_id_client");
-
             entity.HasIndex(e => e.IdClub, "IX_Feedback_id_club");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.Comment).HasColumnName("comment");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
@@ -454,13 +450,13 @@ public partial class CollegeTaskContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("feedback_date");
-            entity.Property(e => e.IdClient).HasColumnName("id_client");
             entity.Property(e => e.IdClub).HasColumnName("id_club");
             entity.Property(e => e.Rating).HasColumnName("rating");
 
-            entity.HasOne(d => d.IdClientNavigation).WithMany(p => p.Feedbacks)
-                .HasForeignKey(d => d.IdClient)
-                .HasConstraintName("FK__Feedback__id_cli__0C85DE4D");
+            entity.HasOne(d => d.Account).WithMany(p => p.Feedbacks)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Feedback__accoun__17036CC0");
 
             entity.HasOne(d => d.IdClubNavigation).WithMany(p => p.Feedbacks)
                 .HasForeignKey(d => d.IdClub)
@@ -470,14 +466,12 @@ public partial class CollegeTaskContext : DbContext
 
         modelBuilder.Entity<Payment>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Payment__3213E83F81D1628A");
+            entity.HasKey(e => e.Id).HasName("PK__Payment__3213E83FCB0EC01C");
 
             entity.ToTable("Payment");
 
-            entity.HasIndex(e => e.ClientId, "IX_Payment_client_id");
-
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.ClientId).HasColumnName("client_id");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -493,15 +487,15 @@ public partial class CollegeTaskContext : DbContext
                 .HasColumnName("link_date");
             entity.Property(e => e.PaymentMethodId).HasColumnName("payment_method_id");
 
-            entity.HasOne(d => d.Client).WithMany(p => p.Payments)
-                .HasForeignKey(d => d.ClientId)
+            entity.HasOne(d => d.Account).WithMany(p => p.Payments)
+                .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Payment__client___45F365D3");
+                .HasConstraintName("FK__Payment__account__1332DBDC");
 
             entity.HasOne(d => d.PaymentMethod).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.PaymentMethodId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Payment__payment__46E78A0C");
+                .HasConstraintName("FK__Payment__payment__14270015");
         });
 
         modelBuilder.Entity<PaymentMethod>(entity =>

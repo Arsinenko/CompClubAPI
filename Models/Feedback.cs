@@ -11,8 +11,6 @@ public partial class Feedback
 
     public int IdClub { get; set; }
 
-    public int? IdClient { get; set; }
-
     public int Rating { get; set; }
 
     public string? Comment { get; set; }
@@ -21,7 +19,9 @@ public partial class Feedback
 
     public DateTime? CreatedAt { get; set; }
 
-    [JsonIgnore] public virtual Client? IdClientNavigation { get; set; }
+    public int AccountId { get; set; }
+
+    [JsonIgnore] public virtual Account Account { get; set; } = null!;
 
     [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;
 }

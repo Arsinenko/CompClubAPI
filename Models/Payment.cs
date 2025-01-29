@@ -15,13 +15,13 @@ public partial class Payment
 
     public DateOnly? LinkDate { get; set; }
 
-    public int ClientId { get; set; }
+    public int AccountId { get; set; }
 
     public int PaymentMethodId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
-    [JsonIgnore] public virtual Client Client { get; set; } = null!;
+    [JsonIgnore] public virtual Account Account { get; set; } = null!;
 
     [JsonIgnore] public virtual PaymentMethod PaymentMethod { get; set; } = null!;
 }

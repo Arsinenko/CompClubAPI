@@ -9,8 +9,6 @@ public partial class Booking
 {
     public int Id { get; set; }
 
-    public int IdClient { get; set; }
-
     public int IdWorkingSpace { get; set; }
 
     public DateTime StartTime { get; set; }
@@ -27,7 +25,9 @@ public partial class Booking
 
     public DateTime? UpdatedAt { get; set; }
 
-    [JsonIgnore] public virtual Client IdClientNavigation { get; set; } = null!;
+    public int AccountId { get; set; }
+
+    [JsonIgnore] public virtual Account Account { get; set; } = null!;
 
     [JsonIgnore] public virtual PaymentMethod? IdPaymentMethodNavigation { get; set; }
 
