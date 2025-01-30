@@ -81,9 +81,18 @@ namespace CompClubAPI.Controllers
             };
             
             _context.Clients.Add(client);
+            
             await _context.SaveChangesAsync();
-
-            return Created("", new {message = "Client created successfully!", id = client.Id});
+            Account account = new Account
+            {
+                IdClient = client.Id,
+                Balance = 0,
+                Login = clientModel.Login,
+                Password = HashHelper.GenerateHash(clientModel.Password)
+            };
+            _context.Add(account);
+            await _context.SaveChangesAsync();
+            return Created("", new {message = "Client created successfully!", client_id = client.Id, accountId = account.Id });
         }
 
         private bool ClientExists(int id)
