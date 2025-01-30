@@ -69,6 +69,26 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = $"Working space with id {workingSpace.Id} deleted successfully!" });
         }
-        
+
+        [HttpPost("add_equipment")]
+        public async Task<ActionResult> AddEquipmentToWorkingSpace(WorkingSpaceEquipment workingSpaceEquipment)
+        {
+            _context.Add(workingSpaceEquipment);
+            await _context.SaveChangesAsync();
+            return Created("", new { message = "Equipment added to working space successfully!" });
+        }
+
+        [HttpDelete("delete_equipment/{id}")]
+        public async Task<ActionResult> DeleteEquipmentFromWorkingSpace(int id)
+        {
+            WorkingSpaceEquipment? workingSpaceEquipment = await _context.WorkingSpaceEquipments.FindAsync(id);
+            if (workingSpaceEquipment == null)
+            {
+                return BadRequest(new { error = "Working space equipment not found!" });
+            }
+            _context.WorkingSpaceEquipments.Remove(workingSpaceEquipment);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = $"Working space equipment with id {workingSpaceEquipment.Id} deleted successfully!" });
+        }
     }
 }
