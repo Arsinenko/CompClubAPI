@@ -22,6 +22,5 @@ public partial class WorkingSpace
     [JsonIgnore] public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
     [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;
-
-    [JsonIgnore] public virtual ICollection<WorkingSpaceEquipment> WorkingSpaceEquipments { get; set; } = new List<WorkingSpaceEquipment>();
+    public virtual ICollection<WorkingSpaceEquipment> WorkingSpaceEquipments { get; set; } = new List<WorkingSpaceEquipment>();
 }
