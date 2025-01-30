@@ -11,9 +11,5 @@ public partial class PaymentMethod
 
     public string Name { get; set; } = null!;
 
-    public bool? IsActive { get; set; }
-
     [JsonIgnore] public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-
-    [JsonIgnore] public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 }

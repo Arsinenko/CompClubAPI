@@ -31,8 +31,6 @@ public partial class Employee
 
     public DateTime? UpdatedAt { get; set; }
 
-    public bool? IsActive { get; set; }
-
     [JsonIgnore] public virtual ICollection<EmployeeActionLog> EmployeeActionLogs { get; set; } = new List<EmployeeActionLog>();
 
     [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;

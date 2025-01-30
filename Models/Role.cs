@@ -13,7 +13,5 @@ public partial class Role
 
     public DateTime? CreatedAt { get; set; }
 
-    public bool? IsActive { get; set; }
-
     [JsonIgnore] public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 }

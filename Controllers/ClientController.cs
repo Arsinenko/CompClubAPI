@@ -23,7 +23,6 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Client
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Client>>> GetClients()
         {
@@ -49,18 +48,21 @@ namespace CompClubAPI.Controllers
         [HttpPut("update_client")]
         public async Task<IActionResult> PutClient(int id, CreateClient clientModel)
         {
-            int clientId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
-            Client? client = await _context.Clients.Where(c => c.Id == clientId).FirstOrDefaultAsync();
+            int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+            Client? client = await _context.Accounts
+                .Where(a => a.Id == accountId)
+                .Select(a => a.IdClientNavigation)
+                .FirstOrDefaultAsync();
             if (client == null)
             {
                 return NotFound( new {message = "Client not found!"});
             }
-
+            
             client.FirstName = clientModel.FirstName;
             client.MiddleName = clientModel.MiddleName;
             client.LastName = clientModel.LastName;
             client.UpdatedAt = DateTime.Now;
-
+            
             _context.Clients.Update(client);
             await _context.SaveChangesAsync();
             return Ok(new {message = $"Client with id {client.Id} updated successfully!"});

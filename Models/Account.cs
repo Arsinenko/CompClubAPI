@@ -24,8 +24,6 @@ public partial class Account
 
     public DateTime? UpdatedAt { get; set; }
 
-    public bool? IsActive { get; set; }
-
     [JsonIgnore] public virtual ICollection<BalanceHistory> BalanceHistories { get; set; } = new List<BalanceHistory>();
 
     [JsonIgnore] public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();

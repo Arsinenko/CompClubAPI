@@ -17,11 +17,7 @@ public partial class Payment
 
     public int AccountId { get; set; }
 
-    public int PaymentMethodId { get; set; }
-
     public DateTime? CreatedAt { get; set; }
 
     [JsonIgnore] public virtual Account Account { get; set; } = null!;
-
-    [JsonIgnore] public virtual PaymentMethod PaymentMethod { get; set; } = null!;
 }

@@ -77,6 +77,33 @@ namespace CompClubAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("add_balance")]
+        public async Task<ActionResult> AddBalance(AddBalanceModel balanceModel)
+        {
+            int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+            Account? account = await _context.Accounts.Where(a => a.Id == accountId).FirstOrDefaultAsync();
+            if (account == null)
+            {
+                return BadRequest(new { error = "Account not found!" });
+            }
+
+            BalanceHistory history = new BalanceHistory
+            {
+                AccountId = accountId,
+                Action = "add_balance",
+                ActionDate = DateTime.Now,
+                Price = balanceModel.Money,
+                PreviousBalance = account.Balance
+            };
+            _context.BalanceHistories.Add(history);
+            account.Balance += balanceModel.Money;
+            account.UpdatedAt = DateTime.Now;
+            _context.Accounts.Update(account);
+            
+            await _context.SaveChangesAsync();
+            return Ok(new {message = "Balance updated successfully!"});
+        }
+
         // POST: api/Account
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("create_account")]
@@ -92,7 +119,7 @@ namespace CompClubAPI.Controllers
             _context.Accounts.Add(account);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAccount", new { id = account.Id }, account);
+            return CreatedAtAction("", new { id = account.Id });
         }
         [HttpPost("authentication")]
         public IActionResult AuthClient(AuthModel authModel)
@@ -104,6 +131,10 @@ namespace CompClubAPI.Controllers
             {
                 return NotFound(new {error = "Client not found!"});
             }
+
+            account.LastLogin = DateTime.Now;
+            _context.Update(account);
+            _context.SaveChanges();
             string token = GenerateJwtToken(account);
             return Ok(new { token });
         }
@@ -117,8 +148,8 @@ namespace CompClubAPI.Controllers
                 audience: "CompClubAPI",
                 claims: new[]
                 {
-                    new Claim("client_id", account.Id.ToString()),
-                    new Claim("client_login", account.Login.ToString()),
+                    new Claim("account_id", account.Id.ToString()),
+                    new Claim("account_login", account.Login.ToString()),
                     new Claim(ClaimTypes.Role, "Client")
                 },
 

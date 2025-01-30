@@ -76,9 +76,6 @@ public partial class CollegeTaskContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.IdClient).HasColumnName("id_client");
-            entity.Property(e => e.IsActive)
-                .HasDefaultValue(true)
-                .HasColumnName("is_active");
             entity.Property(e => e.LastLogin)
                 .HasColumnType("datetime")
                 .HasColumnName("last_login");
@@ -212,9 +209,6 @@ public partial class CollegeTaskContext : DbContext
             entity.Property(e => e.FirstName)
                 .HasMaxLength(50)
                 .HasColumnName("first_name");
-            entity.Property(e => e.IsActive)
-                .HasDefaultValue(true)
-                .HasColumnName("is_active");
             entity.Property(e => e.LastName)
                 .HasMaxLength(50)
                 .HasColumnName("last_name");
@@ -239,9 +233,6 @@ public partial class CollegeTaskContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.IsActive)
-                .HasDefaultValue(true)
-                .HasColumnName("is_active");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
@@ -277,9 +268,6 @@ public partial class CollegeTaskContext : DbContext
             entity.Property(e => e.HireDate).HasColumnName("hire_date");
             entity.Property(e => e.IdClub).HasColumnName("id_club");
             entity.Property(e => e.IdRole).HasColumnName("id_role");
-            entity.Property(e => e.IsActive)
-                .HasDefaultValue(true)
-                .HasColumnName("is_active");
             entity.Property(e => e.LastLogin)
                 .HasColumnType("datetime")
                 .HasColumnName("last_login");
@@ -354,9 +342,6 @@ public partial class CollegeTaskContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.IdClub).HasColumnName("id_club");
-            entity.Property(e => e.IsActive)
-                .HasDefaultValue(true)
-                .HasColumnName("is_active");
             entity.Property(e => e.Name)
                 .HasMaxLength(80)
                 .HasColumnName("name");
@@ -485,17 +470,11 @@ public partial class CollegeTaskContext : DbContext
             entity.Property(e => e.LinkDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("link_date");
-            entity.Property(e => e.PaymentMethodId).HasColumnName("payment_method_id");
 
             entity.HasOne(d => d.Account).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Payment__account__1332DBDC");
-
-            entity.HasOne(d => d.PaymentMethod).WithMany(p => p.Payments)
-                .HasForeignKey(d => d.PaymentMethodId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Payment__payment__14270015");
         });
 
         modelBuilder.Entity<PaymentMethod>(entity =>
@@ -505,9 +484,6 @@ public partial class CollegeTaskContext : DbContext
             entity.ToTable("PaymentMethod");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.IsActive)
-                .HasDefaultValue(true)
-                .HasColumnName("is_active");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
@@ -524,9 +500,6 @@ public partial class CollegeTaskContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.IsActive)
-                .HasDefaultValue(true)
-                .HasColumnName("is_active");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
@@ -577,9 +550,6 @@ public partial class CollegeTaskContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.IdClub).HasColumnName("id_club");
-            entity.Property(e => e.IsActive)
-                .HasDefaultValue(true)
-                .HasColumnName("is_active");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");

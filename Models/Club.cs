@@ -21,8 +21,6 @@ public partial class Club
 
     public DateTime? UpdatedAt { get; set; }
 
-    public bool? IsActive { get; set; }
-
     [JsonIgnore] public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
     [JsonIgnore] public virtual ICollection<Equipment> Equipment { get; set; } = new List<Equipment>();

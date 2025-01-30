@@ -19,8 +19,6 @@ public partial class WorkingSpace
 
     public DateTime? UpdatedAt { get; set; }
 
-    public bool? IsActive { get; set; }
-
     [JsonIgnore] public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
     [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;
