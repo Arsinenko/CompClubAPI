@@ -40,8 +40,10 @@ namespace CompClubAPI.Controllers
         
             return Ok(new
             {
-                id = payment.Id, cardNumber = AesEncryption.Decrypt(payment.EncryptedCardNumber),
-                cvv = AesEncryption.Decrypt(payment.EncryptedCvv), date = payment.LinkDate
+                id = payment.Id,
+                cardNumber = AesEncryption.Decrypt(payment.EncryptedCardNumber),
+                cvv = AesEncryption.Decrypt(payment.EncryptedCvv),
+                createdAt = payment.CreatedAt
             });
         }
 
@@ -64,8 +66,7 @@ namespace CompClubAPI.Controllers
                         
                         AccountId = accountId,
                         EncryptedCardNumber = AesEncryption.Encrypt(paymentModel.CardNumber),
-                        EncryptedCvv = AesEncryption.Encrypt(paymentModel.Cvv),
-                        LinkDate = DateOnly.FromDateTime(DateTime.Now)
+                        EncryptedCvv = AesEncryption.Encrypt(paymentModel.Cvv)
                         
                     };
                     _context.Payments.Add(payment);
@@ -75,7 +76,6 @@ namespace CompClubAPI.Controllers
                 
                 paymentExists.EncryptedCardNumber = AesEncryption.Encrypt(paymentModel.CardNumber);
                 paymentExists.EncryptedCvv = AesEncryption.Encrypt(paymentModel.Cvv);
-                paymentExists.LinkDate = DateOnly.FromDateTime(DateTime.Now);
                 
                 _context.Payments.Update(paymentExists);
                 await _context.SaveChangesAsync();

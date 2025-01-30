@@ -11,8 +11,6 @@ public partial class BalanceHistory
 
     public string? Action { get; set; }
 
-    public DateTime? ActionDate { get; set; }
-
     public decimal? Price { get; set; }
 
     public decimal? PreviousBalance { get; set; }

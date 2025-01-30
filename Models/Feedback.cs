@@ -15,8 +15,6 @@ public partial class Feedback
 
     public string? Comment { get; set; }
 
-    public DateTime? FeedbackDate { get; set; }
-
     public DateTime? CreatedAt { get; set; }
 
     public int AccountId { get; set; }

@@ -13,8 +13,6 @@ public partial class Payment
 
     public byte[]? EncryptedCvv { get; set; }
 
-    public DateOnly? LinkDate { get; set; }
-
     public int AccountId { get; set; }
 
     public DateTime? CreatedAt { get; set; }

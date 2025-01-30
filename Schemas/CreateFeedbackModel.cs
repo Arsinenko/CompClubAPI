@@ -2,7 +2,7 @@
 
 public class CreateFeedbackModel
 {
-    public int clubId { get; set; }
-    public int rating { get; set; }
-    public string comment { get; set; }
+    public int ClubId { get; set; }
+    public int Rating { get; set; }
+    public string Comment { get; set; }
 }

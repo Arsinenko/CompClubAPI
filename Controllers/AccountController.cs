@@ -91,7 +91,6 @@ namespace CompClubAPI.Controllers
             {
                 AccountId = accountId,
                 Action = "add_balance",
-                ActionDate = DateTime.Now,
                 Price = balanceModel.Money,
                 PreviousBalance = account.Balance
             };

@@ -111,10 +111,6 @@ public partial class CollegeTaskContext : DbContext
             entity.Property(e => e.Action)
                 .HasMaxLength(50)
                 .HasColumnName("action");
-            entity.Property(e => e.ActionDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
-                .HasColumnName("action_date");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -431,10 +427,6 @@ public partial class CollegeTaskContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.FeedbackDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
-                .HasColumnName("feedback_date");
             entity.Property(e => e.IdClub).HasColumnName("id_club");
             entity.Property(e => e.Rating).HasColumnName("rating");
 
@@ -467,9 +459,6 @@ public partial class CollegeTaskContext : DbContext
             entity.Property(e => e.EncryptedCvv)
                 .HasMaxLength(32)
                 .HasColumnName("encrypted_CVV");
-            entity.Property(e => e.LinkDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnName("link_date");
 
             entity.HasOne(d => d.Account).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.AccountId)
