@@ -8,9 +8,9 @@ public class CreateBookingModel
 
     public DateTime? EndTime { get; set; }
 
-    public string Status { get; set; } = null!;
+    public int IdStatus { get; set; }
 
     public decimal? TotalCost { get; set; }
 
-    public string? PaymentMethod { get; set; }
+    public int? IdPaymentMethod { get; set; }
 }
