@@ -121,11 +121,11 @@ namespace CompClubAPI.Controllers
             return CreatedAtAction("", new { id = account.Id });
         }
         [HttpPost("authentication")]
-        public IActionResult AuthClient(AuthModel authModel)
+        public async Task<ActionResult> AuthClient(AuthModel authModel)
         {
             byte[] passwordHash = HashHelper.GenerateHash(authModel.password);
 
-            Account? account = _context.Accounts.FirstOrDefault(a => a.Login == authModel.login && a.Password.SequenceEqual(passwordHash));
+            Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.Login == authModel.login && a.Password.SequenceEqual(passwordHash));
             if (account == null)
             {
                 return NotFound(new {error = "Client not found!"});

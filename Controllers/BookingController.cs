@@ -35,11 +35,61 @@ namespace CompClubAPI.Controllers
             return Ok(new {message = "Booking created successfully!"});
         }
 
-        [HttpGet]
+        [HttpGet("get_bookings")]
         public async Task<ActionResult> GetBookings()
         {
             List<Booking> bookings = await _context.Bookings.ToListAsync();
             return Ok(bookings);
         }
+        
+        [Authorize(Roles = "Client")]
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateBooking(int id, CreateBookingModel bookingModel)
+        {
+            Booking? booking = await _context.Bookings.Where(b =>
+                b.Id == id && b.AccountId == Convert.ToInt32(User.FindFirst("account_id")!.Value))
+                .FirstOrDefaultAsync();
+            if (booking == null)
+            {
+                return BadRequest(new {message = "Booking not found!"});
+            }
+
+            booking.IdWorkingSpace = bookingModel.IdWorkingSpace;
+            booking.StartTime = bookingModel.StartTime;
+            booking.EndTime = bookingModel.EndTime;
+            booking.TotalCost = bookingModel.TotalCost;
+            booking.IdPaymentMethod = bookingModel.IdPaymentMethod;
+            booking.UpdatedAt = DateTime.Now;
+            
+            _context.Bookings.Update(booking);
+            await _context.SaveChangesAsync();
+            return Ok(new {message = "Booking updated successfully!"});
+        }
+        
+        [Authorize(Roles = "Client")]
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteBooking(int id)
+        {
+            Booking? booking = await _context.Bookings.Where(b =>
+                b.Id == id && b.AccountId == Convert.ToInt32(User.FindFirst("account_id")!.Value))
+                .FirstOrDefaultAsync();
+            if (booking == null)
+            {
+                return BadRequest(new {message = "Booking not found!"});
+            }
+            _context.Bookings.Remove(booking);
+            await _context.SaveChangesAsync();
+            return Ok(new {message = "Booking deleted successfully!"});
+        }
+        
+        [Authorize(Roles = "Client")]
+        [HttpGet("get_info/{id}")]
+        public async Task<ActionResult> GetBooking(int id)
+        {
+            int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+            Booking? booking = await _context.Bookings.Where(b => b.Id == id && b.AccountId == accountId).FirstOrDefaultAsync();
+            return Ok(booking);
+        }
+        
     }
 }
