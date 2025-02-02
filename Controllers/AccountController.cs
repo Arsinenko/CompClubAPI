@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
 using CompClubAPI.Schemas;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CompClubAPI.Controllers
@@ -33,6 +28,7 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Account/5
+        [Authorize(Roles = "Admin")]
         [HttpGet("get_info/{id}")]
         public async Task<ActionResult<Account>> GetAccount(int id)
         {
@@ -45,9 +41,26 @@ namespace CompClubAPI.Controllers
 
             return account;
         }
+        
+        [Authorize(Roles = "Client")]
+        [HttpGet("get_info")]
+        public async Task<ActionResult<Account>> GetAccountInfo()
+        {
+            int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+            var account = await _context.Accounts.FindAsync(accountId);
 
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(account);
+        }
+        
+        
         // PUT: api/Account/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin")] // for employee
         [HttpPut("update/{id}")]
         public async Task<IActionResult> PutAccount(int id, Account account)
         {
@@ -77,6 +90,28 @@ namespace CompClubAPI.Controllers
             return NoContent();
         }
 
+
+        [Authorize(Roles = "Client")]
+        [HttpPut("update")]
+        public async Task<IActionResult> PutAccount(UpdateAccountModel accountModel)
+        {
+            int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+            Account? account = await _context.Accounts.Where(a => a.Id == accountId).FirstOrDefaultAsync();
+            if (account == null)
+            {
+                return BadRequest(new { error = "Account not found!" });
+            }
+
+            account.Login = accountModel.Login;
+            account.Password = HashHelper.GenerateHash(accountModel.Password); 
+            account.Balance = accountModel.Balance;
+            account.UpdatedAt = DateTime.Now;
+            _context.Accounts.Update(account);
+            await _context.SaveChangesAsync();
+            return Ok(new {message = "Account updated successfully!"});
+        }
+
+        
         [HttpPost("add_balance")]
         public async Task<ActionResult> AddBalance(AddBalanceModel balanceModel)
         {
@@ -143,9 +178,9 @@ namespace CompClubAPI.Controllers
             return Ok(new { token });
         }
         [NonAction]
-        public string GenerateJwtToken(Account account)
+        private string GenerateJwtToken(Account account)
         {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("df8f3c6058ce4d93b799b4d8dc0b5ff66e1eccf69aa29505c6c84a6339a914a4")); //TODO
+            var secretKey = new SymmetricSecurityKey("df8f3c6058ce4d93b799b4d8dc0b5ff66e1eccf69aa29505c6c84a6339a914a4"u8.ToArray()); //TODO make it more secure
             var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
                 issuer: "CompClubAPI",
@@ -153,7 +188,7 @@ namespace CompClubAPI.Controllers
                 claims: new[]
                 {
                     new Claim("account_id", account.Id.ToString()),
-                    new Claim("account_login", account.Login.ToString()),
+                    new Claim("account_login", account.Login),
                     new Claim(ClaimTypes.Role, "Client")
                 },
 
@@ -162,29 +197,6 @@ namespace CompClubAPI.Controllers
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
-
-        // // DELETE: api/Account/5
-        // [HttpPost("deactivate")]
-        // public async Task<IActionResult> DeactivateAccount()
-        // {
-        //     int clientId = int.Parse(User.Claims.First(c => c.Type == "client_id").Value);
-        //     Account? account = await _context.Accounts.Where(a => a.IdClient == clientId).FirstOrDefaultAsync();
-        //     if (account == null)
-        //     {
-        //         return NotFound(new {message = "Account not found"});
-        //     }
-        //     Client? client = await _context.Clients.Where(c => c.Id == clientId).FirstOrDefaultAsync();
-        //     if (client == null)
-        //     {
-        //         return NotFound(new { message = "Client not found!" });
-        //     }
-        //     account.UpdatedAt = DateTime.Now;
-        //     account.IsActive = false;
-        //     _context.Accounts.Update(account);
-        //     await _context.SaveChangesAsync();
-        //     return Ok(new {message = $"Deactivated account {account.Id}, Deactivated client with id {clientId}"});
-        // }
 
         private bool AccountExists(int id)
         {
