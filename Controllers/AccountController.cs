@@ -26,14 +26,14 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Account
-        [HttpGet]
+        [HttpGet("get_accounts")]
         public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
         {
             return await _context.Accounts.ToListAsync();
         }
 
         // GET: api/Account/5
-        [HttpGet("{id}")]
+        [HttpGet("get_info/{id}")]
         public async Task<ActionResult<Account>> GetAccount(int id)
         {
             var account = await _context.Accounts.FindAsync(id);
@@ -48,7 +48,7 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Account/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> PutAccount(int id, Account account)
         {
             if (id != account.Id)
@@ -108,6 +108,11 @@ namespace CompClubAPI.Controllers
         [HttpPost("create_account")]
         public async Task<ActionResult<Account>> CreateAccount(CreateAccountModel accountModel)
         {
+            List<string> logins = await _context.Accounts.Select(a => a.Login).ToListAsync();
+            if (logins.Contains(accountModel.Login))
+            {
+                return BadRequest(new { message = "Login already exists! You need to crate another one." });
+            }
             Account account = new Account
             {
                 IdClient = accountModel.ClientId,
@@ -133,7 +138,7 @@ namespace CompClubAPI.Controllers
 
             account.LastLogin = DateTime.Now;
             _context.Update(account);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             string token = GenerateJwtToken(account);
             return Ok(new { token });
         }

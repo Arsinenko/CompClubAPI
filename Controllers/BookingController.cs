@@ -11,7 +11,7 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class BookingController : ControllerBase
     {
-        public readonly CollegeTaskContext _context;
+        private readonly CollegeTaskContext _context;
 
         public BookingController(CollegeTaskContext context)
         {
@@ -34,11 +34,20 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new {message = "Booking created successfully!"});
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet("get_bookings")]
         public async Task<ActionResult> GetBookings()
         {
             List<Booking> bookings = await _context.Bookings.ToListAsync();
+            return Ok(bookings);
+        }
+        
+        [Authorize(Roles = "Client")]
+        [HttpGet("get_client_bookings")]
+        public async Task<ActionResult> GetClientBookings()
+        {
+            int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+            List<Booking> bookings = await _context.Bookings.Where(b => b.AccountId == accountId).ToListAsync();
             return Ok(bookings);
         }
         
@@ -75,7 +84,7 @@ namespace CompClubAPI.Controllers
                 .FirstOrDefaultAsync();
             if (booking == null)
             {
-                return BadRequest(new {message = "Booking not found!"});
+                return BadRequest(new {message = "Booking not found or not yours!"});
             }
             _context.Bookings.Remove(booking);
             await _context.SaveChangesAsync();
