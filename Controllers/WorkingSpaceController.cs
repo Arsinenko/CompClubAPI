@@ -9,7 +9,7 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class WorkingSpaceController : ControllerBase
     {
-        public readonly CollegeTaskContext _context;
+        private readonly CollegeTaskContext _context;
         public WorkingSpaceController(CollegeTaskContext context)
         {
             _context = context;
