@@ -14,11 +14,11 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        public readonly CollegeTaskContext _context;
+        public readonly CollegeTaskContext Context;
 
         public EmployeeController(CollegeTaskContext context)
         {
-            _context = context;
+            Context = context;
         }
 
         [HttpPost("hire_employee")]
@@ -36,15 +36,15 @@ namespace CompClubAPI.Controllers
                 CreatedAt = DateTime.Now
             };
 
-            _context.Employees.Add(employee);
-            await _context.SaveChangesAsync();
+            Context.Employees.Add(employee);
+            await Context.SaveChangesAsync();
             return Created("", new { message = "Employee hired successfully!", id = employee.Id });
         }
 
         [HttpGet("get_employees")]
         public async Task<ActionResult> GetEmployees()
         {
-            return Ok(await _context.Employees.ToListAsync());
+            return Ok(await Context.Employees.ToListAsync());
             
         }
 
@@ -52,19 +52,20 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult> Authorization(AuthModel authModel)
         {
             byte[] passwordHash = HashHelper.GenerateHash(authModel.password);
-            Employee? employee = await _context.Employees.FirstOrDefaultAsync(a => a.Login == authModel.login && a.Password.SequenceEqual(passwordHash));
+            Employee? employee = await Context.Employees.FirstOrDefaultAsync(a =>
+                a.Login == authModel.login && a.Password.SequenceEqual(passwordHash));
             if (employee == null)
             {
                 return NotFound(new { error = "Employee not found!" });
             }
-            string? role = await _context.Roles.Where(r => r.Id == employee.IdRole).Select(r => r.Name).FirstOrDefaultAsync();
+            string? role = await Context.Roles.Where(r => r.Id == employee.IdRole).Select(r => r.Name).FirstOrDefaultAsync();
             if (role == null)
             {
                 return NotFound(new { error = "Role not found!" });
             }
             employee.LastLogin = DateTime.Now;
-            _context.Update(employee);
-            await _context.SaveChangesAsync();
+            Context.Update(employee);
+            await Context.SaveChangesAsync();
             string token = GenerateJwtToken(employee, role);
             return Ok(new { token });
         }
