@@ -10,7 +10,8 @@ namespace CompClubAPI.Controllers
     public class WorkingSpaceController : ControllerBase
     {
         private readonly CollegeTaskContext _context;
-        public WorkingSpaceController(CollegeTaskContext context)
+
+        private WorkingSpaceController(CollegeTaskContext context)
         {
             _context = context;
         }
@@ -27,6 +28,13 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult> GetWorkingSpaces()
         {
             List<WorkingSpace> workingSpaces = await _context.WorkingSpaces.ToListAsync();
+            return Ok(workingSpaces);
+        }
+        
+        [HttpGet("working_spaces_by_club/{idClub}")]
+        public async Task<ActionResult> GetWorkingSpacesByClub(int idClub)
+        {
+            List<WorkingSpace> workingSpaces = await _context.WorkingSpaces.Where(ws => ws.IdClub == idClub).ToListAsync();
             return Ok(workingSpaces);
         }
 

@@ -10,7 +10,8 @@ namespace CompClubAPI.Controllers
     public class ClubController : ControllerBase
     {
         private readonly CollegeTaskContext _context;
-        public ClubController(CollegeTaskContext context)
+
+        private ClubController(CollegeTaskContext context)
         {
             _context = context;
         }

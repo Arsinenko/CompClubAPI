@@ -9,9 +9,9 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class EquipmentController : ControllerBase
     {
-        public readonly CollegeTaskContext _context;
+        private readonly CollegeTaskContext _context;
 
-        public EquipmentController(CollegeTaskContext context)
+        private EquipmentController(CollegeTaskContext context)
         {
             _context = context;
         }

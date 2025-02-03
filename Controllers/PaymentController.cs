@@ -12,18 +12,18 @@ namespace CompClubAPI.Controllers
     {
         private readonly CollegeTaskContext _context;
 
-        public PaymentsController(CollegeTaskContext context)
+        private PaymentsController(CollegeTaskContext context)
         {
             _context = context;
         }
 
         // GET: api/Payments
-        [Authorize(Roles = "Employee")]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Payment>>> GetPayments()
-        {
-            return await _context.Payments.ToListAsync();
-        }
+        // [Authorize(Roles = "Employee")]
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<Payment>>> GetPayments()
+        // {
+        //     return await _context.Payments.ToListAsync();
+        // }
 
         // GET: api/Payments/5
         [Authorize(Roles = "Client")]

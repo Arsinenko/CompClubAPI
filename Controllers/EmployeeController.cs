@@ -16,7 +16,7 @@ namespace CompClubAPI.Controllers
     {
         public readonly CollegeTaskContext Context;
 
-        public EmployeeController(CollegeTaskContext context)
+        private EmployeeController(CollegeTaskContext context)
         {
             Context = context;
         }
@@ -46,6 +46,25 @@ namespace CompClubAPI.Controllers
         {
             return Ok(await Context.Employees.ToListAsync());
             
+        }
+
+        [HttpGet("get_employees_by_club/{id}")]
+        public async Task<ActionResult> GetEmployeesByClub(int id)
+        {
+            return Ok(await Context.Employees.Where(e => e.IdClub == id).ToListAsync());
+        }
+        
+        [HttpPost("fire_employee")]
+        public async Task<ActionResult> FireEmployee(int id)
+        {
+            Employee? employee = await Context.Employees.FindAsync(id);
+            if (employee == null)
+            {
+                return BadRequest(new { message = "Employee not found!" });
+            }
+            Context.Employees.Remove(employee);
+            await Context.SaveChangesAsync();
+            return Ok(new { message = "Employee fired successfully!" });
         }
 
         [HttpPost("authorization")]

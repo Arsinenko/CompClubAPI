@@ -11,9 +11,9 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class FeedbackController : ControllerBase
     {
-        public readonly CollegeTaskContext _context;
+        private readonly CollegeTaskContext _context;
 
-        public FeedbackController(CollegeTaskContext context)
+        private FeedbackController(CollegeTaskContext context)
         {
             _context = context;
         }
@@ -38,7 +38,7 @@ namespace CompClubAPI.Controllers
             return Created("", new { message = "Feedback created successfully!", id = feedback.Id });
         }
 
-        [HttpGet]
+        [HttpGet("get_feedbacks")]
         public async Task<ActionResult> GetFeedbacks()
         {
             List<Feedback> feedbacks = await _context.Feedbacks.ToListAsync();
