@@ -3,6 +3,7 @@ using CompClubAPI.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CompClubAPI.Middleware;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Cors;
 
@@ -14,7 +15,9 @@ namespace CompClubAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Add services to the container
+            builder.Services.AddLogging();
+            builder.Services.AddSingleton<TimerService>();
             builder.Services.AddDbContext<CollegeTaskContext>();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -88,7 +91,8 @@ namespace CompClubAPI
                 });
             }
             
-
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+            
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

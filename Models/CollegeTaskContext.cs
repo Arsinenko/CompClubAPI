@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-using System.Text.Json.Serialization;
-
 namespace CompClubAPI.Models;
 
 public partial class CollegeTaskContext : DbContext
@@ -17,41 +15,43 @@ public partial class CollegeTaskContext : DbContext
     {
     }
 
-    [JsonIgnore] public virtual DbSet<Account> Accounts { get; set; }
+    public virtual DbSet<Account> Accounts { get; set; }
 
-    [JsonIgnore] public virtual DbSet<BalanceHistory> BalanceHistories { get; set; }
+    public virtual DbSet<BalanceHistory> BalanceHistories { get; set; }
 
-    [JsonIgnore] public virtual DbSet<Booking> Bookings { get; set; }
+    public virtual DbSet<Booking> Bookings { get; set; }
 
-    [JsonIgnore] public virtual DbSet<BookingStatus> BookingStatuses { get; set; }
+    public virtual DbSet<BookingStatus> BookingStatuses { get; set; }
 
-    [JsonIgnore] public virtual DbSet<Client> Clients { get; set; }
+    public virtual DbSet<Client> Clients { get; set; }
 
-    [JsonIgnore] public virtual DbSet<Club> Clubs { get; set; }
+    public virtual DbSet<Club> Clubs { get; set; }
 
-    [JsonIgnore] public virtual DbSet<Employee> Employees { get; set; }
+    public virtual DbSet<Employee> Employees { get; set; }
 
-    [JsonIgnore] public virtual DbSet<EmployeeActionLog> EmployeeActionLogs { get; set; }
+    public virtual DbSet<EmployeeActionLog> EmployeeActionLogs { get; set; }
 
-    [JsonIgnore] public virtual DbSet<Equipment> Equipment { get; set; }
+    public virtual DbSet<Equipment> Equipment { get; set; }
 
-    [JsonIgnore] public virtual DbSet<EquipmentMaintenance> EquipmentMaintenances { get; set; }
+    public virtual DbSet<EquipmentMaintenance> EquipmentMaintenances { get; set; }
 
-    [JsonIgnore] public virtual DbSet<EquipmentStatus> EquipmentStatuses { get; set; }
+    public virtual DbSet<EquipmentStatus> EquipmentStatuses { get; set; }
 
-    [JsonIgnore] public virtual DbSet<Feedback> Feedbacks { get; set; }
+    public virtual DbSet<Feedback> Feedbacks { get; set; }
 
-    [JsonIgnore] public virtual DbSet<Payment> Payments { get; set; }
+    public virtual DbSet<Payment> Payments { get; set; }
 
-    [JsonIgnore] public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
+    public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
 
-    [JsonIgnore] public virtual DbSet<Role> Roles { get; set; }
+    public virtual DbSet<Role> Roles { get; set; }
 
-    [JsonIgnore] public virtual DbSet<Shift> Shifts { get; set; }
+    public virtual DbSet<Shift> Shifts { get; set; }
 
-    [JsonIgnore] public virtual DbSet<WorkingSpace> WorkingSpaces { get; set; }
+    public virtual DbSet<Tariff> Tariffs { get; set; }
 
-    [JsonIgnore] public virtual DbSet<WorkingSpaceEquipment> WorkingSpaceEquipments { get; set; }
+    public virtual DbSet<WorkingSpace> WorkingSpaces { get; set; }
+
+    public virtual DbSet<WorkingSpaceEquipment> WorkingSpaceEquipments { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -525,6 +525,21 @@ public partial class CollegeTaskContext : DbContext
                 .HasConstraintName("FK__Shift__id_employ__06CD04F7");
         });
 
+        modelBuilder.Entity<Tariff>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Tariff__3213E83FFCBC004C");
+
+            entity.ToTable("Tariff");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
+            entity.Property(e => e.PricePerMinute)
+                .HasColumnType("money")
+                .HasColumnName("pricePerMinute");
+        });
+
         modelBuilder.Entity<WorkingSpace>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__WorkingS__3213E83F500C02FE");
@@ -545,6 +560,7 @@ public partial class CollegeTaskContext : DbContext
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
                 .HasColumnName("status");
+            entity.Property(e => e.TariffId).HasColumnName("tariff_id");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -554,6 +570,10 @@ public partial class CollegeTaskContext : DbContext
                 .HasForeignKey(d => d.IdClub)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__WorkingSp__id_cl__5535A963");
+
+            entity.HasOne(d => d.Tariff).WithMany(p => p.WorkingSpaces)
+                .HasForeignKey(d => d.TariffId)
+                .HasConstraintName("FK__WorkingSp__tarif__3A4CA8FD");
         });
 
         modelBuilder.Entity<WorkingSpaceEquipment>(entity =>

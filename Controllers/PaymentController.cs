@@ -12,7 +12,7 @@ namespace CompClubAPI.Controllers
     {
         private readonly CollegeTaskContext _context;
 
-        private PaymentsController(CollegeTaskContext context)
+        public PaymentsController(CollegeTaskContext context)
         {
             _context = context;
         }

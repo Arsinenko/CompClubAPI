@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using System.Text.Json.Serialization;
-
 namespace CompClubAPI.Models;
 
 public partial class Equipment
@@ -29,11 +27,11 @@ public partial class Equipment
 
     public DateTime? UpdatedAt { get; set; }
 
-    [JsonIgnore] public virtual ICollection<EquipmentMaintenance> EquipmentMaintenances { get; set; } = new List<EquipmentMaintenance>();
+    public virtual ICollection<EquipmentMaintenance> EquipmentMaintenances { get; set; } = new List<EquipmentMaintenance>();
 
-    [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;
+    public virtual Club IdClubNavigation { get; set; } = null!;
 
-    [JsonIgnore] public virtual EquipmentStatus StatusNavigation { get; set; } = null!;
+    public virtual EquipmentStatus StatusNavigation { get; set; } = null!;
 
-    [JsonIgnore] public virtual ICollection<WorkingSpaceEquipment> WorkingSpaceEquipments { get; set; } = new List<WorkingSpaceEquipment>();
+    public virtual ICollection<WorkingSpaceEquipment> WorkingSpaceEquipments { get; set; } = new List<WorkingSpaceEquipment>();
 }

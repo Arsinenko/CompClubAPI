@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using System.Text.Json.Serialization;
-
 namespace CompClubAPI.Models;
 
 public partial class WorkingSpace
@@ -19,8 +17,13 @@ public partial class WorkingSpace
 
     public DateTime? UpdatedAt { get; set; }
 
-    [JsonIgnore] public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    public int? TariffId { get; set; }
 
-    [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;
+    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+
+    public virtual Club IdClubNavigation { get; set; } = null!;
+
+    public virtual Tariff? Tariff { get; set; }
+
     public virtual ICollection<WorkingSpaceEquipment> WorkingSpaceEquipments { get; set; } = new List<WorkingSpaceEquipment>();
 }

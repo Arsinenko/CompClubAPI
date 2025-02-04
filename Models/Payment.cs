@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using System.Text.Json.Serialization;
-
 namespace CompClubAPI.Models;
 
 public partial class Payment
@@ -17,5 +15,5 @@ public partial class Payment
 
     public DateTime? CreatedAt { get; set; }
 
-    [JsonIgnore] public virtual Account Account { get; set; } = null!;
+    public virtual Account Account { get; set; } = null!;
 }

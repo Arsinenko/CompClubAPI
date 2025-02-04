@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using System.Text.Json.Serialization;
-
 namespace CompClubAPI.Models;
 
 public partial class Employee
@@ -31,11 +29,11 @@ public partial class Employee
 
     public DateTime? UpdatedAt { get; set; }
 
-    [JsonIgnore] public virtual ICollection<EmployeeActionLog> EmployeeActionLogs { get; set; } = new List<EmployeeActionLog>();
+    public virtual ICollection<EmployeeActionLog> EmployeeActionLogs { get; set; } = new List<EmployeeActionLog>();
 
-    [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;
+    public virtual Club IdClubNavigation { get; set; } = null!;
 
-    [JsonIgnore] public virtual Role IdRoleNavigation { get; set; } = null!;
+    public virtual Role IdRoleNavigation { get; set; } = null!;
 
-    [JsonIgnore] public virtual ICollection<Shift> Shifts { get; set; } = new List<Shift>();
+    public virtual ICollection<Shift> Shifts { get; set; } = new List<Shift>();
 }

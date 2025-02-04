@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 
@@ -24,13 +23,13 @@ public partial class Account
 
     public DateTime? UpdatedAt { get; set; }
 
-    [JsonIgnore] public virtual ICollection<BalanceHistory> BalanceHistories { get; set; } = new List<BalanceHistory>();
+    public virtual ICollection<BalanceHistory> BalanceHistories { get; set; } = new List<BalanceHistory>();
 
-    [JsonIgnore] public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
-    [JsonIgnore] public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
+    public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
-    [JsonIgnore] public virtual Client IdClientNavigation { get; set; } = null!;
+    public virtual Client IdClientNavigation { get; set; } = null!;
 
-    [JsonIgnore] public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+    public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 }

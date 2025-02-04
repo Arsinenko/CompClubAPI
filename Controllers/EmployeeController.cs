@@ -14,11 +14,11 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        public readonly CollegeTaskContext Context;
+        private readonly CollegeTaskContext _context;
 
-        private EmployeeController(CollegeTaskContext context)
+        public EmployeeController(CollegeTaskContext context)
         {
-            Context = context;
+            _context = context;
         }
 
         [HttpPost("hire_employee")]
@@ -36,34 +36,34 @@ namespace CompClubAPI.Controllers
                 CreatedAt = DateTime.Now
             };
 
-            Context.Employees.Add(employee);
-            await Context.SaveChangesAsync();
+            _context.Employees.Add(employee);
+            await _context.SaveChangesAsync();
             return Created("", new { message = "Employee hired successfully!", id = employee.Id });
         }
 
         [HttpGet("get_employees")]
         public async Task<ActionResult> GetEmployees()
         {
-            return Ok(await Context.Employees.ToListAsync());
+            return Ok(await _context.Employees.ToListAsync());
             
         }
 
         [HttpGet("get_employees_by_club/{id}")]
         public async Task<ActionResult> GetEmployeesByClub(int id)
         {
-            return Ok(await Context.Employees.Where(e => e.IdClub == id).ToListAsync());
+            return Ok(await _context.Employees.Where(e => e.IdClub == id).ToListAsync());
         }
         
         [HttpPost("fire_employee")]
         public async Task<ActionResult> FireEmployee(int id)
         {
-            Employee? employee = await Context.Employees.FindAsync(id);
+            Employee? employee = await _context.Employees.FindAsync(id);
             if (employee == null)
             {
                 return BadRequest(new { message = "Employee not found!" });
             }
-            Context.Employees.Remove(employee);
-            await Context.SaveChangesAsync();
+            _context.Employees.Remove(employee);
+            await _context.SaveChangesAsync();
             return Ok(new { message = "Employee fired successfully!" });
         }
 
@@ -71,20 +71,20 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult> Authorization(AuthModel authModel)
         {
             byte[] passwordHash = HashHelper.GenerateHash(authModel.password);
-            Employee? employee = await Context.Employees.FirstOrDefaultAsync(a =>
+            Employee? employee = await _context.Employees.FirstOrDefaultAsync(a =>
                 a.Login == authModel.login && a.Password.SequenceEqual(passwordHash));
             if (employee == null)
             {
                 return NotFound(new { error = "Employee not found!" });
             }
-            string? role = await Context.Roles.Where(r => r.Id == employee.IdRole).Select(r => r.Name).FirstOrDefaultAsync();
+            string? role = await _context.Roles.Where(r => r.Id == employee.IdRole).Select(r => r.Name).FirstOrDefaultAsync();
             if (role == null)
             {
                 return NotFound(new { error = "Role not found!" });
             }
             employee.LastLogin = DateTime.Now;
-            Context.Update(employee);
-            await Context.SaveChangesAsync();
+            _context.Update(employee);
+            await _context.SaveChangesAsync();
             string token = GenerateJwtToken(employee, role);
             return Ok(new { token });
         }

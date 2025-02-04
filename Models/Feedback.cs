@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using System.Text.Json.Serialization;
-
 namespace CompClubAPI.Models;
 
 public partial class Feedback
@@ -19,7 +17,7 @@ public partial class Feedback
 
     public int AccountId { get; set; }
 
-    [JsonIgnore] public virtual Account Account { get; set; } = null!;
+    public virtual Account Account { get; set; } = null!;
 
-    [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;
+    public virtual Club IdClubNavigation { get; set; } = null!;
 }

@@ -11,7 +11,7 @@ namespace CompClubAPI.Controllers
     {
         private readonly CollegeTaskContext _context;
 
-        private EquipmentController(CollegeTaskContext context)
+        public EquipmentController(CollegeTaskContext context)
         {
             _context = context;
         }

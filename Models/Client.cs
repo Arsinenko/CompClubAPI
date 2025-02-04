@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using System.Text.Json.Serialization;
-
 namespace CompClubAPI.Models;
 
 public partial class Client
@@ -19,5 +17,5 @@ public partial class Client
 
     public DateTime? UpdatedAt { get; set; }
 
-    [JsonIgnore] public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
+    public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 }

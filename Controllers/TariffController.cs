@@ -1,0 +1,63 @@
+using CompClubAPI.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace CompClubAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TariffController : ControllerBase
+    {
+        public readonly CollegeTaskContext _context;
+
+        public TariffController(CollegeTaskContext context)
+        {
+            _context = context;
+        }
+        
+        [HttpGet("get_tariffs")]
+        public async Task<ActionResult<IEnumerable<Tariff>>> GetTariffs()
+        {
+            return await _context.Tariffs.ToListAsync();
+        }
+        
+        [HttpPost("create_tariff")]
+        public async Task<ActionResult<Tariff>> CreateTariff(Tariff tariff)
+        {
+            _context.Tariffs.Add(tariff);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction("", new { id = tariff.Id });
+        }
+
+        [HttpPost("update_tariff/{id}")]
+        public async Task<ActionResult<Tariff>> UpdateTariff(int id, Tariff updateTariff)
+        {
+            Tariff? tariff = await _context.Tariffs.FindAsync(id);
+            if (tariff == null)
+            {
+                return BadRequest(new { error = "Tariff not found!" });
+            }
+            tariff.Name = updateTariff.Name;
+            tariff.PricePerMinute = updateTariff.PricePerMinute;
+            
+            _context.Tariffs.Update(tariff);
+            await _context.SaveChangesAsync();
+            
+            return Ok(new { message = "Tariff updated successfully!" });
+        }
+        
+        [HttpDelete("delete_tariff/{id}")]
+        public async Task<ActionResult<Tariff>> DeleteTariff(int id)
+        {
+            Tariff? tariff = await _context.Tariffs.FindAsync(id);
+            if (tariff == null)
+            {
+                return BadRequest(new { error = "Tariff not found!" });
+            }
+            _context.Tariffs.Remove(tariff);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Tariff deleted successfully!" });
+        }
+    }
+}
