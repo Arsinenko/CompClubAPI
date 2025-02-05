@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 
@@ -9,5 +10,5 @@ public partial class EquipmentStatus
 
     public string Name { get; set; } = null!;
 
-    public virtual ICollection<Equipment> Equipment { get; set; } = new List<Equipment>();
+    [JsonIgnore] public virtual ICollection<Equipment> Equipment { get; set; } = new List<Equipment>();
 }

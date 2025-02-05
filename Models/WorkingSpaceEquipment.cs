@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 
@@ -15,7 +16,7 @@ public partial class WorkingSpaceEquipment
 
     public DateTime? UpdatedAt { get; set; }
 
-    public virtual Equipment IdEquipmentNavigation { get; set; } = null!;
+    [JsonIgnore] public virtual Equipment IdEquipmentNavigation { get; set; } = null!;
 
-    public virtual WorkingSpace IdWorkingSpaceNavigation { get; set; } = null!;
+    [JsonIgnore] public virtual WorkingSpace IdWorkingSpaceNavigation { get; set; } = null!;
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 
@@ -17,5 +18,5 @@ public partial class Shift
 
     public DateTime? UpdatedAt { get; set; }
 
-    public virtual Employee IdEmployeeNavigation { get; set; } = null!;
+    [JsonIgnore] public virtual Employee IdEmployeeNavigation { get; set; } = null!;
 }

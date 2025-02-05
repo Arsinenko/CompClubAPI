@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 
@@ -25,11 +26,11 @@ public partial class Booking
 
     public int AccountId { get; set; }
 
-    public virtual Account Account { get; set; } = null!;
+    [JsonIgnore] public virtual Account Account { get; set; } = null!;
 
-    public virtual PaymentMethod? IdPaymentMethodNavigation { get; set; }
+    [JsonIgnore] public virtual PaymentMethod? IdPaymentMethodNavigation { get; set; }
 
-    public virtual BookingStatus IdStatusNavigation { get; set; } = null!;
+    [JsonIgnore] public virtual BookingStatus IdStatusNavigation { get; set; } = null!;
 
-    public virtual WorkingSpace IdWorkingSpaceNavigation { get; set; } = null!;
+    [JsonIgnore] public virtual WorkingSpace IdWorkingSpaceNavigation { get; set; } = null!;
 }

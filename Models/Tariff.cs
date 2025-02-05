@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 
@@ -11,5 +12,5 @@ public partial class Tariff
 
     public decimal PricePerMinute { get; set; }
 
-    public virtual ICollection<WorkingSpace> WorkingSpaces { get; set; } = new List<WorkingSpace>();
+    [JsonIgnore] public virtual ICollection<WorkingSpace> WorkingSpaces { get; set; } = new List<WorkingSpace>();
 }

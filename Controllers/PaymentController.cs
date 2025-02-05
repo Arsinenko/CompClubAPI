@@ -56,7 +56,7 @@ namespace CompClubAPI.Controllers
         {
             try
             {
-                int accountId = Convert.ToInt32(User.FindFirst("client_id")?.Value);
+                int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
                 var paymentExists = await _context.Payments.Where(p => p.AccountId == accountId).FirstOrDefaultAsync();
                 
                 if (paymentExists == null)

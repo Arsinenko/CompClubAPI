@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 
@@ -17,5 +18,5 @@ public partial class BalanceHistory
 
     public int AccountId { get; set; }
 
-    public virtual Account Account { get; set; } = null!;
+    [JsonIgnore] public virtual Account Account { get; set; } = null!;
 }

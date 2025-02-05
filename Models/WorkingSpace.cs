@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 
@@ -19,11 +20,11 @@ public partial class WorkingSpace
 
     public int? TariffId { get; set; }
 
-    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    [JsonIgnore] public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
-    public virtual Club IdClubNavigation { get; set; } = null!;
+    [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;
 
-    public virtual Tariff? Tariff { get; set; }
+    [JsonIgnore] public virtual Tariff? Tariff { get; set; }
 
-    public virtual ICollection<WorkingSpaceEquipment> WorkingSpaceEquipments { get; set; } = new List<WorkingSpaceEquipment>();
+    [JsonIgnore] public virtual ICollection<WorkingSpaceEquipment> WorkingSpaceEquipments { get; set; } = new List<WorkingSpaceEquipment>();
 }

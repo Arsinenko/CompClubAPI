@@ -47,14 +47,14 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult<Account>> GetAccountInfo()
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
-            var account = await _context.Accounts.FindAsync(accountId);
+            var AccountClient = await _context.Accounts.Where(a => a.Id == accountId).Include(a => a.IdClientNavigation).FirstOrDefaultAsync();
 
-            if (account == null)
+            if (AccountClient == null)
             {
                 return NotFound();
             }
 
-            return Ok(account);
+            return Ok(AccountClient);
         }
         
         
@@ -160,6 +160,15 @@ namespace CompClubAPI.Controllers
 
             return CreatedAtAction("", new { id = account.Id });
         }
+        [Authorize(Roles = "Client")]
+        [HttpGet("balance_history")]
+        public async Task<ActionResult> getBalanceHistory()
+        {
+            int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+            List<BalanceHistory> history = await _context.BalanceHistories.Where(h => h.AccountId == accountId).ToListAsync();
+            return Ok(history);
+        }
+
         [HttpPost("authentication")]
         public async Task<ActionResult> AuthClient(AuthModel authModel)
         {

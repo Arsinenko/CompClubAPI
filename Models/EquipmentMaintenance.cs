@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 
@@ -17,5 +18,5 @@ public partial class EquipmentMaintenance
 
     public DateTime? CreatedAt { get; set; }
 
-    public virtual Equipment Equipment { get; set; } = null!;
+    [JsonIgnore] public virtual Equipment Equipment { get; set; } = null!;
 }

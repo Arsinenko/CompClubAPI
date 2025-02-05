@@ -73,7 +73,7 @@ namespace CompClubAPI.Controllers
         [HttpPost("create_client")]
         public async Task<ActionResult<Client>> PostClient(CreateClient clientModel)
         {
-            if (clientModel.Login.Length <= 3 || clientModel.Password.Length <= 8)
+            if (clientModel.Login.Length < 3 || clientModel.Password.Length < 8)
             {
                 return BadRequest(new {message = "Login or password is too short! Password must be at least 8 characters long! Login must be at least 3 characters long!"}); //{})
             }
