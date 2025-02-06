@@ -17,23 +17,23 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-        [Authorize(Roles = "Client")]
-        [HttpPost("create_booking")]
-        public async Task<ActionResult> CreateBooking(CreateBookingModel bookingModel)
-        {
-            Booking booking = new Booking();
-            
-            booking.AccountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
-            booking.IdWorkingSpace = bookingModel.IdWorkingSpace;
-            booking.StartTime = bookingModel.StartTime;
-            booking.EndTime = bookingModel.EndTime;
-            booking.TotalCost = bookingModel.TotalCost;
-            booking.IdPaymentMethod = bookingModel.IdPaymentMethod;
-            
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
-            return Ok(new {message = "Booking created successfully!"});
-        }
+        // [Authorize(Roles = "Client")]
+        // [HttpPost("create_booking")]
+        // public async Task<ActionResult> CreateBooking(CreateBookingModel bookingModel)
+        // {
+        //     Booking booking = new Booking();
+        //     
+        //     booking.AccountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+        //     booking.IdWorkingSpace = bookingModel.IdWorkingSpace;
+        //     booking.StartTime = bookingModel.StartTime;
+        //     booking.EndTime = bookingModel.EndTime;
+        //     booking.TotalCost = bookingModel.TotalCost;
+        //     booking.IdPaymentMethod = bookingModel.IdPaymentMethod;
+        //     
+        //     _context.Bookings.Add(booking);
+        //     await _context.SaveChangesAsync();
+        //     return Ok(new {message = "Booking created successfully!"});
+        // }
         [Authorize(Roles = "Admin")]
         [HttpGet("get_bookings")]
         public async Task<ActionResult> GetBookings()
@@ -51,29 +51,29 @@ namespace CompClubAPI.Controllers
             return Ok(bookings);
         }
         
-        [Authorize(Roles = "Client")]
-        [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdateBooking(int id, CreateBookingModel bookingModel)
-        {
-            Booking? booking = await _context.Bookings.Where(b =>
-                b.Id == id && b.AccountId == Convert.ToInt32(User.FindFirst("account_id")!.Value))
-                .FirstOrDefaultAsync();
-            if (booking == null)
-            {
-                return BadRequest(new {message = "Booking not found!"});
-            }
-
-            booking.IdWorkingSpace = bookingModel.IdWorkingSpace;
-            booking.StartTime = bookingModel.StartTime;
-            booking.EndTime = bookingModel.EndTime;
-            booking.TotalCost = bookingModel.TotalCost;
-            booking.IdPaymentMethod = bookingModel.IdPaymentMethod;
-            booking.UpdatedAt = DateTime.Now;
-            
-            _context.Bookings.Update(booking);
-            await _context.SaveChangesAsync();
-            return Ok(new {message = "Booking updated successfully!"});
-        }
+        // [Authorize(Roles = "Client")]
+        // [HttpPut("update/{id}")]
+        // public async Task<IActionResult> UpdateBooking(int id, CreateBookingModel bookingModel)
+        // {
+        //     Booking? booking = await _context.Bookings.Where(b =>
+        //         b.Id == id && b.AccountId == Convert.ToInt32(User.FindFirst("account_id")!.Value))
+        //         .FirstOrDefaultAsync();
+        //     if (booking == null)
+        //     {
+        //         return BadRequest(new {message = "Booking not found!"});
+        //     }
+        //
+        //     booking.IdWorkingSpace = bookingModel.IdWorkingSpace;
+        //     booking.StartTime = bookingModel.StartTime;
+        //     booking.EndTime = bookingModel.EndTime;
+        //     booking.TotalCost = bookingModel.TotalCost;
+        //     booking.IdPaymentMethod = bookingModel.IdPaymentMethod;
+        //     booking.UpdatedAt = DateTime.Now;
+        //     
+        //     _context.Bookings.Update(booking);
+        //     await _context.SaveChangesAsync();
+        //     return Ok(new {message = "Booking updated successfully!"});
+        // }
         
         [Authorize(Roles = "Client")]
         [HttpDelete("delete/{id}")]
