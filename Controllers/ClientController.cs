@@ -91,6 +91,7 @@ namespace CompClubAPI.Controllers
             {
                 IdClient = client.Id,
                 Balance = 0,
+                Email = clientModel.Email,
                 Login = clientModel.Login,
                 Password = HashHelper.GenerateHash(clientModel.Password)
             };

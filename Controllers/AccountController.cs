@@ -139,32 +139,35 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new {message = "Balance updated successfully!"});
         }
-
-        // POST: api/Account
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("create_account")]
-        public async Task<ActionResult<Account>> CreateAccount(CreateAccountModel accountModel)
+        
+        [Authorize(Roles = "Admin")]
+        [HttpPost("add_balance_by_id/{id}")]
+        public async Task<ActionResult> AddBalanceById(int id, decimal money)
         {
-            List<string> logins = await _context.Accounts.Select(a => a.Login).ToListAsync();
-            if (logins.Contains(accountModel.Login))
+            Account? account = await _context.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
+            if (account == null)
             {
-                return BadRequest(new { message = "Login already exists! You need to crate another one." });
+                return BadRequest(new { error = "Account not found!" });
             }
-            Account account = new Account
+            BalanceHistory history = new BalanceHistory
             {
-                IdClient = accountModel.ClientId,
-                Balance = accountModel.Balance,
-                Login = accountModel.Login,
-                Password = HashHelper.GenerateHash(accountModel.Password)
+                AccountId = id,
+                Action = "add_balance",
+                Price = money,
+                PreviousBalance = account.Balance
             };
-            _context.Accounts.Add(account);
+            _context.BalanceHistories.Add(history);
+            account.Balance += money;
+            account.UpdatedAt = DateTime.Now;
+            _context.Accounts.Update(account);
+            
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("", new { id = account.Id });
+            return Ok(new {message = "Balance updated successfully!"});
         }
+
         [Authorize(Roles = "Client")]
         [HttpGet("balance_history")]
-        public async Task<ActionResult> getBalanceHistory()
+        public async Task<ActionResult> GetBalanceHistory()
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
             List<BalanceHistory> history = await _context.BalanceHistories.Where(h => h.AccountId == accountId).ToListAsync();
@@ -209,7 +212,7 @@ namespace CompClubAPI.Controllers
             
             SmtpClient client = new SmtpClient("smtp.gmail.com");
             client.Port = 587;
-            client.Credentials = new NetworkCredential("kimarsinenko@gmail.com", "bvhx hlhs oipf vubo ");
+            client.Credentials = new NetworkCredential("kimarsinenko@gmail.com", "bvhx hlhs oipf vubo "); // TODO make it more secure
             client.EnableSsl = true;
             
             client.Send(message);

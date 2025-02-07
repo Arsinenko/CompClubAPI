@@ -51,30 +51,6 @@ namespace CompClubAPI.Controllers
             return Ok(bookings);
         }
         
-        // [Authorize(Roles = "Client")]
-        // [HttpPut("update/{id}")]
-        // public async Task<IActionResult> UpdateBooking(int id, CreateBookingModel bookingModel)
-        // {
-        //     Booking? booking = await _context.Bookings.Where(b =>
-        //         b.Id == id && b.AccountId == Convert.ToInt32(User.FindFirst("account_id")!.Value))
-        //         .FirstOrDefaultAsync();
-        //     if (booking == null)
-        //     {
-        //         return BadRequest(new {message = "Booking not found!"});
-        //     }
-        //
-        //     booking.IdWorkingSpace = bookingModel.IdWorkingSpace;
-        //     booking.StartTime = bookingModel.StartTime;
-        //     booking.EndTime = bookingModel.EndTime;
-        //     booking.TotalCost = bookingModel.TotalCost;
-        //     booking.IdPaymentMethod = bookingModel.IdPaymentMethod;
-        //     booking.UpdatedAt = DateTime.Now;
-        //     
-        //     _context.Bookings.Update(booking);
-        //     await _context.SaveChangesAsync();
-        //     return Ok(new {message = "Booking updated successfully!"});
-        // }
-        
         [Authorize(Roles = "Client")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteBooking(int id)
