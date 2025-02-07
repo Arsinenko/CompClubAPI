@@ -1,24 +1,22 @@
 ﻿using System.Collections.Concurrent;
-using Microsoft.Extensions.DependencyInjection;
 using CompClubAPI.Models;
-using CompClubAPI.Schemas;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompClubAPI;
 
-public class TimerService
+public class SessionService
 {
     private readonly ConcurrentDictionary<int, Timer> _timers = new();
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public TimerService(IServiceScopeFactory scopeFactory)
+    public SessionService(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
     }
 
     public Task<int> StartTimer(int interval, int accountId)
     {
-        Timer timer = new Timer(async state => await DoWork(state), accountId, TimeSpan.Zero,
+        Timer timer = new Timer(async void (state) => await DoWork(state), accountId, TimeSpan.Zero,
             TimeSpan.FromSeconds(interval));
         _timers[accountId] = timer;
         Console.WriteLine($"timer {accountId} started");
@@ -41,7 +39,7 @@ public class TimerService
 
     public async Task DoWork(object? state)
     {
-        int accountId = (int)state;
+        int accountId = (int)state!;
 
         using (var scope = _scopeFactory.CreateScope())
         {
@@ -97,7 +95,7 @@ public class TimerService
                     Console.WriteLine("no enough money in account with id " + accountId);
 
                     await StopBooking(accountId);
-                    StopTimer(accountId);
+                    await StopTimer(accountId);
                 }
             }
         }

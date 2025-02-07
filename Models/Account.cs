@@ -11,6 +11,8 @@ public partial class Account
     public int IdClient { get; set; }
 
     public decimal? Balance { get; set; }
+    
+    public string Email { get; set; } = null!;
 
     public string Login { get; set; } = null!;
 

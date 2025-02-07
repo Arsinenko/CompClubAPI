@@ -17,7 +17,7 @@ namespace CompClubAPI
 
             // Add services to the container
             builder.Services.AddLogging();
-            builder.Services.AddSingleton<TimerService>();
+            builder.Services.AddSingleton<SessionService>();
             builder.Services.AddDbContext<CollegeTaskContext>();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

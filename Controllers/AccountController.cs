@@ -1,4 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -167,6 +169,51 @@ namespace CompClubAPI.Controllers
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
             List<BalanceHistory> history = await _context.BalanceHistories.Where(h => h.AccountId == accountId).ToListAsync();
             return Ok(history);
+        }
+        [Authorize(Roles = "Client")]
+        [HttpPost("change_password")]
+        public async Task<ActionResult> ChangePassword(ChangePasswordModel changePasswordModel)
+        {
+            // for authorized users only
+            int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+            Account? account = await _context.Accounts.Where(a => a.Id == accountId).FirstOrDefaultAsync();
+            if (account == null)
+            {
+                return BadRequest(new { error = "Account not found!" });
+            }
+            account.Password = HashHelper.GenerateHash(changePasswordModel.Password);
+            account.UpdatedAt = DateTime.Now;
+            _context.Accounts.Update(account);
+            await _context.SaveChangesAsync();
+            return Ok(new {message = "Password updated successfully!"});
+        }
+
+        [HttpPost("change_password_by_email/{email}")]
+        public async Task<ActionResult> ChangePasswordByEmail(string email)
+        {
+            
+            string to = email;
+            string from = "kimarsinenko@gmail.com";
+            string subject = "Your temp password";
+            
+            
+            string randomPassword = string.Empty;
+            Random random = new Random();
+            for (int i = 0; i < 8; i++)
+            {
+                randomPassword += (char)('a' + random.Next(26));
+            }
+            
+            string body = "Your temporary password is: " + randomPassword + "\n Please change it as soon as possible.";
+            MailMessage message = new MailMessage(from, to, subject, body);
+            
+            SmtpClient client = new SmtpClient("smtp.gmail.com");
+            client.Port = 587;
+            client.Credentials = new NetworkCredential("kimarsinenko@gmail.com", "bvhx hlhs oipf vubo ");
+            client.EnableSsl = true;
+            
+            client.Send(message);
+            return Ok(new {message = "Password sent to email"});
         }
 
         [HttpPost("authentication")]

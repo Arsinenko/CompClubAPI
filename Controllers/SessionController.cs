@@ -8,15 +8,15 @@ namespace CompClubAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TimerController : ControllerBase
+    public class SessionController : ControllerBase
     {
-        private readonly TimerService _timerService;
+        private readonly SessionService _sessionService;
         private readonly CollegeTaskContext _context;
         
 
-        public TimerController(TimerService timerService, CollegeTaskContext context)
+        public SessionController(SessionService sessionService, CollegeTaskContext context)
         {
-            _timerService = timerService;
+            _sessionService = sessionService;
             _context = context;
         }
         [Authorize(Roles = "Client")]
@@ -34,14 +34,14 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
-            int timerId = await _timerService.StartTimer(interval, accountId);
+            int timerId = await _sessionService.StartTimer(interval, accountId);
             return Ok(new {timerId=timerId, message = "Timer started"});
         }
 
         [HttpPost("stop")]
         public async Task<ActionResult> StopTimer([FromQuery] int timerId)
         {
-            bool isStopped = await _timerService.StopTimer(timerId);
+            bool isStopped = await _sessionService.StopTimer(timerId);
             return Ok(new {isStopped=isStopped, message = "Timer stopped"});
         }
     }

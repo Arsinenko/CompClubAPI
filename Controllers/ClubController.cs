@@ -1,4 +1,5 @@
 using CompClubAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-        
+        [Authorize(Roles = "Admin")]
         [HttpPost("create_club")]
         public async Task<ActionResult<Club>> CreateClub(Club club)
         {

@@ -80,6 +80,9 @@ public partial class CollegeTaskContext : DbContext
             entity.Property(e => e.LastLogin)
                 .HasColumnType("datetime")
                 .HasColumnName("last_login");
+            entity.Property(e => e.Email)
+                .HasMaxLength(50)
+                .HasColumnName("email");
             entity.Property(e => e.Login)
                 .HasMaxLength(50)
                 .HasColumnName("login");
