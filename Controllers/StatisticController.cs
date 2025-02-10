@@ -16,7 +16,7 @@ namespace CompClubAPI.Controllers
             _context = context;
         }
 
-        [HttpPost("update_finance_statistic/{id}")] // id - id клуба
+        [HttpPut("update_finance_statistic/{id}")] // id - id клуба
         public async Task<ActionResult> UpdateFinanceStatistic(int id, decimal money, bool revenue)
         {
             Statistic? statistic = (await _context.Statistics.Where(s => s.IdClub == id).FirstOrDefaultAsync());
@@ -37,5 +37,13 @@ namespace CompClubAPI.Controllers
             decimal currentFinances = await _context.Statistics.Where(s => s.IdClub == id).Select(s => s.Finances).FirstOrDefaultAsync();
             return Ok(new { costRevenues, currentFinances });
         }
+        [HttpGet("statistics")]
+        public async Task<ActionResult> GetStatistics()
+        {
+            List<Statistic> statistics = await _context.Statistics.ToListAsync();
+            return Ok(statistics);
+        }
+        
+        
     }   
 }

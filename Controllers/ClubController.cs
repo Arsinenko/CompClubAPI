@@ -1,4 +1,5 @@
 using CompClubAPI.Models;
+using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,29 @@ namespace CompClubAPI.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPost("create_club")]
-        public async Task<ActionResult<Club>> CreateClub(Club club)
+        public async Task<ActionResult<Club>> CreateClub(CreateClubModel model)
         {
-            _context.Add(club);
+            Club club = new Club
+            {
+                Address = model.Address,
+                Name = model.Name,
+                Phone = model.Phone,
+            };
+            _context.Clubs.Add(club);
             await _context.SaveChangesAsync();
-            return Created("", new {message = "Club created successfully!", id = club.Id});
+            Statistic statistic = new Statistic
+            {
+                IdClub = club.Id,
+                Finances = model.Finances
+            };
+            _context.Statistics.Add(statistic);
+            await _context.SaveChangesAsync();
+            return Created("", new
+            {
+                message = "Club created successfully!",
+                idClub = club.Id,
+                idStatisctic = statistic.Id
+            });
         }
         
         [HttpGet("get_clubs")]
