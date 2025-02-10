@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<div>
+    <h1>Registration</h1>
+    <form method="post">
+        <div>
+            <label for="firstname">First Name:</label>
+            <input type="text" id="firstname" name="firstname" required />
+        </div>
+        <div>
+            <label for="middlename">Middle Name:</label>
+            <input type="text" id="middlename" name="middlename" />
+        </div>
+        <div>
+            <label for="lastname">Last Name:</label>
+            <input type="text" id="lastname" name="lastname" required />
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required />
+        </div>
+        <div>
+            <label for="login">Login:</label>
+            <input type="text" id="login" name="login" required />
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required />
+        </div>
+        <div>
+            <label for="repeatpassword">Repeat Password:</label>
+            <input type="password" id="repeatpassword" name="repeatpassword" required />
+        </div>
+        <div>
+            <button type="button" onclick="sendRequest()">Register</button>
+        </div>
+        <p>already have an account? <a asp-page="./Login">login</a></p>
+    </form>
+</div>
+</body>
+<script>
+    function sendRequest() {
+        var firstname = document.getElementById("firstname").value;
+        var middlename = document.getElementById("middlename").value;
+        var lastname = document.getElementById("lastname").value;
+        var email = document.getElementById("email").value;
+        var login = document.getElementById("login").value;
+        var password = document.getElementById("password").value;
+        var repeatpassword = document.getElementById("repeatpassword").value;
+
+        if (password !== repeatpassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+        var url = "http://localhost:8000/api/Client/create_client";
+        var data = {
+            "firstName": firstname,
+            "middleName": middlename,
+            "lastName": lastname,
+            "email": email,
+            "login": login,
+            "password": password
+        };
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert("Registration successful!");
+                document.cookie = "data[token]="+data.token+"; SameSite=Strict; Secure";
+                window.location.href = "http://localhost:8000/Pages/login";
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert("An error occurred. Please try again.");
+            });
+
+    }
+</script>
+</html>

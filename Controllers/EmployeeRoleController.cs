@@ -1,6 +1,7 @@
 using CompClubAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompClubAPI.Controllers
 {
@@ -47,6 +48,12 @@ namespace CompClubAPI.Controllers
             role.Name = Name;
             await _context.SaveChangesAsync();
             return Ok(new { message = "Role updated successfully!" });
+        }
+        
+        [HttpGet("get_roles")]
+        public async Task<ActionResult> GetRoles()
+        {
+            return Ok(await _context.Roles.ToListAsync());
         }
     }
 }

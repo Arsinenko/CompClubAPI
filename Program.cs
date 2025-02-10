@@ -19,15 +19,26 @@ namespace CompClubAPI
             builder.Services.AddLogging();
             builder.Services.AddSingleton<SessionService>();
             builder.Services.AddDbContext<CollegeTaskContext>();
+            builder.Services.AddRazorPages();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    });
+            });
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
+            // Swagger/OpenAPI configuration
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 
-                // Настройка JWT в Swagger
+                // JWT configuration in Swagger
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -51,6 +62,7 @@ namespace CompClubAPI
                     }
                 });
             });
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -67,19 +79,9 @@ namespace CompClubAPI
                     )
                 };
             });
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAllOrigins",
-                    builder =>
-                    {
-                        builder.AllowAnyOrigin()
-                            .AllowAnyMethod()
-                            .AllowAnyHeader();
-                    });
-            });
+
             var app = builder.Build();
-            app.UseStaticFiles();
-           
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -90,15 +92,24 @@ namespace CompClubAPI
                     c.InjectStylesheet("/swagger-ui/SwaggerDark.css");
                 });
             }
-            
-            app.UseMiddleware<RequestResponseLoggingMiddleware>();
-            
+
+            app.UseStaticFiles();
+
             app.UseHttpsRedirection();
+
+            app.UseRouting(); // Важно: добавьте этот вызов перед UseEndpoints
 
             app.UseAuthorization();
 
+            app.UseCors("AllowAll");
 
-            app.MapControllers();
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapControllers(); // Добавьте это, если у вас есть контроллеры
+            });
 
             app.Run();
         }

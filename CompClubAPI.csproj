@@ -30,6 +30,11 @@
     <_ContentIncludedByDefault Remove="Views\Clients\Details.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Clients\Edit.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Clients\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="wwwroot\pages\home.html" />
+    <_ContentIncludedByDefault Remove="wwwroot\pages\index.html" />
+    <_ContentIncludedByDefault Remove="wwwroot\pages\login.html" />
+    <_ContentIncludedByDefault Remove="wwwroot\pages\register.html" />
+    <_ContentIncludedByDefault Remove="Pages\Index.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
