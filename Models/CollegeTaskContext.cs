@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+
 using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
@@ -567,6 +568,12 @@ public partial class CollegeTaskContext : DbContext
             entity.Property(e => e.Finances)
                 .HasColumnType("money")
                 .HasColumnName("finances");
+            entity.Property(e => e.IdClub).HasColumnName("id_club");
+
+            entity.HasOne(d => d.IdClubNavigation).WithMany(p => p.Statistics)
+                .HasForeignKey(d => d.IdClub)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Statistic__id_cl__57DD0BE4");
         });
 
         modelBuilder.Entity<Tariff>(entity =>

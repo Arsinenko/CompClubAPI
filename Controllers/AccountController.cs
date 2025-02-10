@@ -142,7 +142,7 @@ namespace CompClubAPI.Controllers
         
         [Authorize(Roles = "Admin")]
         [HttpPost("add_balance_by_id/{id}")]
-        public async Task<ActionResult> AddBalanceById(int id, decimal money)
+        public async Task<ActionResult> AddBalanceById(int id, [FromQuery] int idClub, decimal money)
         {
             Account? account = await _context.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
             if (account == null)
@@ -156,6 +156,14 @@ namespace CompClubAPI.Controllers
                 Price = money,
                 PreviousBalance = account.Balance
             };
+            CostRevenue revenue = new CostRevenue
+            {
+                IdClub = idClub,
+                Amount = money,
+                Revenue = true,
+                CreatedAt = DateTime.Now
+            };
+            _context.CostRevenues.Add(revenue);
             _context.BalanceHistories.Add(history);
             account.Balance += money;
             account.UpdatedAt = DateTime.Now;

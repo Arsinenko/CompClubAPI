@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
@@ -11,4 +12,8 @@ public partial class Statistic
     public decimal Finances { get; set; }
 
     public int? ClientNumber { get; set; }
+
+    public int IdClub { get; set; }
+
+    [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;
 }
