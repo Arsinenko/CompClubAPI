@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 
@@ -28,6 +28,8 @@ public partial class CollegeTaskContext : DbContext
 
     [JsonIgnore] public virtual DbSet<Club> Clubs { get; set; }
 
+    [JsonIgnore] public virtual DbSet<CostRevenue> CostRevenues { get; set; }
+
     [JsonIgnore] public virtual DbSet<Employee> Employees { get; set; }
 
     [JsonIgnore] public virtual DbSet<EmployeeActionLog> EmployeeActionLogs { get; set; }
@@ -47,6 +49,8 @@ public partial class CollegeTaskContext : DbContext
     [JsonIgnore] public virtual DbSet<Role> Roles { get; set; }
 
     [JsonIgnore] public virtual DbSet<Shift> Shifts { get; set; }
+
+    [JsonIgnore] public virtual DbSet<Statistic> Statistics { get; set; }
 
     [JsonIgnore] public virtual DbSet<Tariff> Tariffs { get; set; }
 
@@ -76,13 +80,13 @@ public partial class CollegeTaskContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
+            entity.Property(e => e.Email)
+                .HasMaxLength(50)
+                .HasColumnName("email");
             entity.Property(e => e.IdClient).HasColumnName("id_client");
             entity.Property(e => e.LastLogin)
                 .HasColumnType("datetime")
                 .HasColumnName("last_login");
-            entity.Property(e => e.Email)
-                .HasMaxLength(50)
-                .HasColumnName("email");
             entity.Property(e => e.Login)
                 .HasMaxLength(50)
                 .HasColumnName("login");
@@ -248,6 +252,29 @@ public partial class CollegeTaskContext : DbContext
                 .HasMaxLength(50)
                 .HasDefaultValue("10:00-21:00")
                 .HasColumnName("working_hours");
+        });
+
+        modelBuilder.Entity<CostRevenue>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CostReve__3213E83F693444FD");
+
+            entity.ToTable("CostRevenue");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Amount)
+                .HasColumnType("money")
+                .HasColumnName("amount");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.IdClub).HasColumnName("id_club");
+            entity.Property(e => e.Revenue).HasColumnName("revenue");
+
+            entity.HasOne(d => d.IdClubNavigation).WithMany(p => p.CostRevenues)
+                .HasForeignKey(d => d.IdClub)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__CostReven__id_cl__55009F39");
         });
 
         modelBuilder.Entity<Employee>(entity =>
@@ -527,6 +554,19 @@ public partial class CollegeTaskContext : DbContext
                 .HasForeignKey(d => d.IdEmployee)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Shift__id_employ__06CD04F7");
+        });
+
+        modelBuilder.Entity<Statistic>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Statisti__3213E83F70667EBB");
+
+            entity.ToTable("Statistic");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ClientNumber).HasColumnName("client_number");
+            entity.Property(e => e.Finances)
+                .HasColumnType("money")
+                .HasColumnName("finances");
         });
 
         modelBuilder.Entity<Tariff>(entity =>

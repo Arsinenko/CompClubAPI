@@ -20,6 +20,8 @@ public partial class Club
 
     public DateTime? UpdatedAt { get; set; }
 
+    [JsonIgnore] public virtual ICollection<CostRevenue> CostRevenues { get; set; } = new List<CostRevenue>();
+
     [JsonIgnore] public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
     [JsonIgnore] public virtual ICollection<Equipment> Equipment { get; set; } = new List<Equipment>();
