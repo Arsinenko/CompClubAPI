@@ -1,0 +1,115 @@
+body {
+
+    display: flex;
+    
+    background-color: #333;
+    
+    color: #fff;
+
+    justify-content: center;
+
+    align-items: center;
+
+    height: 100vh; /* Занимает всю высоту экрана */
+
+    margin: 0;
+
+    font-family: Arial, sans-serif;
+
+}
+
+h1 {
+
+    text-align: center; /* Центрирует заголовок */
+}
+
+
+.register-form {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center; /* Центрирует элементы по горизонтали */
+
+    width: 300px; /* Ширина формы */
+
+    padding: 20px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 5px;
+
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+}
+
+
+.register-form div {
+
+    margin-bottom: 15px; /* Отступ между элементами */
+
+    width: 100%; /* Занимает всю ширину формы */
+
+}
+
+
+.register-form label {
+
+    display: block; /* Делает метки блочными элементами */
+
+    margin-bottom: 5px; /* Отступ снизу */
+
+}
+
+
+.register-form input {
+
+    width: 100%; /* Занимает всю ширину контейнера */
+
+    padding: 8px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 4px;
+    
+    background: #333;
+    
+    color: #ffd0ba;
+
+}
+
+
+.register-form button {
+
+    padding: 10px 15px;
+    
+    display: block;
+
+    margin: 0 auto;
+
+    border: none;
+
+    border-radius: 4px;
+
+    background-color: #28a745;
+
+    color: white;
+
+    cursor: pointer;
+
+}
+
+
+.register-form button:hover {
+
+    background-color: #218838;
+
+}
+
+
+p {
+
+    text-align: center; /* Центрирует текст */
+
+}
