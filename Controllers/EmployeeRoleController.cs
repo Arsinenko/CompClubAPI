@@ -1,4 +1,5 @@
 using CompClubAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,15 +16,15 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPost("create_role")]
-        public async Task<ActionResult> CreateRole(string Name)
+        public async Task<ActionResult> CreateRole(string name)
         {
-            _context.Roles.Add(new Role { Name = Name });
+            _context.Roles.Add(new Role { Name = name });
             await _context.SaveChangesAsync();
             return Ok(new { message = "Role created successfully!" });
         }
-
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpDelete("delete_role/{id}")]
         public async Task<ActionResult> DeleteRole(int id)
         {
@@ -36,20 +37,20 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Role deleted successfully!" });
         }
-        
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPut("update_role/{id}")]
-        public async Task<ActionResult> UpdateRole(int id, string Name)
+        public async Task<ActionResult> UpdateRole(int id, string name)
         {
             Role? role = await _context.Roles.FindAsync(id);
             if (role == null)
             {
                 return BadRequest(new { error = "Role not found!" });
             }
-            role.Name = Name;
+            role.Name = name;
             await _context.SaveChangesAsync();
             return Ok(new { message = "Role updated successfully!" });
         }
-        
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpGet("get_roles")]
         public async Task<ActionResult> GetRoles()
         {

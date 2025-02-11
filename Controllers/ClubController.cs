@@ -17,7 +17,7 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Owner,Admin")]
         [HttpPost("create_club")]
         public async Task<ActionResult<Club>> CreateClub(CreateClubModel model)
         {

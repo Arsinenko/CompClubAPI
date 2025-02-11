@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using CompClubAPI.Models;
 using CompClubAPI.Schemas;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-
+        [Authorize(Roles = "Owner,Admin")]
         [HttpPost("hire_employee")]
         public async Task<ActionResult> HireEmployee(HireEmployeeModel employeeModel)
         {
@@ -40,20 +41,20 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Created("", new { message = "Employee hired successfully!", id = employee.Id });
         }
-
+        [Authorize(Roles = "Owner")]
         [HttpGet("get_employees")]
         public async Task<ActionResult> GetEmployees()
         {
             return Ok(await _context.Employees.ToListAsync());
             
         }
-
+        [Authorize(Roles = "Owner,Admin")]
         [HttpGet("get_employees_by_club/{id}")]
         public async Task<ActionResult> GetEmployeesByClub(int id)
         {
             return Ok(await _context.Employees.Where(e => e.IdClub == id).ToListAsync());
         }
-        
+        [Authorize(Roles = "Owner")]
         [HttpPost("fire_employee")]
         public async Task<ActionResult> FireEmployee(int id)
         {

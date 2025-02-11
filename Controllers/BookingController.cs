@@ -34,12 +34,24 @@ namespace CompClubAPI.Controllers
         //     await _context.SaveChangesAsync();
         //     return Ok(new {message = "Booking created successfully!"});
         // }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpGet("get_bookings")]
         public async Task<ActionResult> GetBookings()
         {
             List<Booking> bookings = await _context.Bookings.ToListAsync();
             return Ok(bookings);
+        }
+
+        [Authorize(Roles = "Owner,Admin,Marketer")]
+        [HttpGet("get_booking/{id}")]
+        public async Task<ActionResult> GetBookingById(int id)
+        {
+            Booking? booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                return NotFound("Booking not found");
+            }
+            return Ok(booking);
         }
         
         [Authorize(Roles = "Client")]

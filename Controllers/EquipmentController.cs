@@ -1,4 +1,5 @@
 using CompClubAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPost("create_equipment")]
         public async Task<ActionResult> CreateEquipment(Equipment equipment)
         {
@@ -23,7 +24,7 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Created("", new { message = "Equipment created successfully!", id = equipment.Id });
         }
-
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpGet("info/{id}")]
         public async Task<ActionResult> GetEquipmentInfo(int id)
         {
@@ -35,7 +36,7 @@ namespace CompClubAPI.Controllers
 
             return Ok(equipment);
         }
-
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateEquipment(int id, Equipment equipment)
         {
@@ -48,7 +49,7 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = $"Equipment with id {equipment.Id} updated successfully!" });
         }
-
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteEquipment(int id)
         {
@@ -62,14 +63,16 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Equipment deleted successfully!" });
         }
-
+        
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpGet("EquipmentMaintenances")]
         public async Task<ActionResult<List<EquipmentMaintenance>>> GetEquipmentMaintenances()
         {
             List<EquipmentMaintenance> equipmentMaintenances = await _context.EquipmentMaintenances.ToListAsync();
             return Ok(equipmentMaintenances);
         }
-
+        
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPost("create_equipment_maintenance")]
         public async Task<ActionResult> CreateEquipmentMaintenance(EquipmentMaintenance equipmentMaintenance)
         {
@@ -78,7 +81,8 @@ namespace CompClubAPI.Controllers
             return Created("",
                 new { message = "Equipment maintenance created successfully!", id = equipmentMaintenance.Id });
         }
-
+        
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPut("update_equipment_maintenance/{id}")]
         public async Task<IActionResult> UpdateEquipmentMaintenance(int id, EquipmentMaintenance equipmentMaintenance)
         {

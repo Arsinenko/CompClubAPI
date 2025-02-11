@@ -1,4 +1,5 @@
 using CompClubAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-
+        [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpPut("update_finance_statistic/{id}")] // id - id клуба
         public async Task<ActionResult> UpdateFinanceStatistic(int id, decimal money, bool revenue)
         {
@@ -30,6 +31,7 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Statistic updated successfully!" });
         }
+        [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpGet("get_club_finance_statistic/{id}")] // id - id клуба
         public async Task<ActionResult> GetClubStatistic(int id)
         {
@@ -37,6 +39,7 @@ namespace CompClubAPI.Controllers
             decimal currentFinances = await _context.Statistics.Where(s => s.IdClub == id).Select(s => s.Finances).FirstOrDefaultAsync();
             return Ok(new { costRevenues, currentFinances });
         }
+        [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpGet("statistics")]
         public async Task<ActionResult> GetStatistics()
         {

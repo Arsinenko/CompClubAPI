@@ -1,4 +1,5 @@
 using CompClubAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +16,13 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-        
+        [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpGet("get_tariffs")]
         public async Task<ActionResult<IEnumerable<Tariff>>> GetTariffs()
         {
             return await _context.Tariffs.ToListAsync();
         }
-        
+        [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpPost("create_tariff")]
         public async Task<ActionResult<Tariff>> CreateTariff(Tariff tariff)
         {
@@ -29,7 +30,7 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return CreatedAtAction("", new { id = tariff.Id });
         }
-
+        [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpPost("update_tariff/{id}")]
         public async Task<ActionResult<Tariff>> UpdateTariff(int id, Tariff updateTariff)
         {
@@ -46,7 +47,7 @@ namespace CompClubAPI.Controllers
             
             return Ok(new { message = "Tariff updated successfully!" });
         }
-        
+        [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpDelete("delete_tariff/{id}")]
         public async Task<ActionResult<Tariff>> DeleteTariff(int id)
         {
