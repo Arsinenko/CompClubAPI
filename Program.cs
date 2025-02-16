@@ -14,7 +14,8 @@ namespace CompClubAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            
+            builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             // Add services to the container
             builder.Services.AddLogging();
             builder.Services.AddSingleton<SessionService>();
@@ -92,7 +93,7 @@ namespace CompClubAPI
                     c.InjectStylesheet("/swagger-ui/SwaggerDark.css");
                 });
             }
-
+            
             app.UseStaticFiles();
 
             app.UseHttpsRedirection();

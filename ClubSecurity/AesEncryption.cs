@@ -6,15 +6,22 @@ namespace CompClubAPI
 {
     public class AesEncryption
     {
-        private static readonly byte[] key = HexStringToByteArray("93fb3366ac0295cf9d1ca9d4661eb529e943ce1e2acdfc492f8ad05738a75612"); // 32 байта для AES-256
-        private static readonly byte[] iv = HexStringToByteArray("61356123be0ae15e9ae20ab8105c27ee"); // 16 байт для IV
+        private readonly IConfiguration _configuration;
+        private readonly byte[] _key;// 32 байта для AES-256
+        private readonly byte[] _iv; // 16 байт для IV
 
-        public static byte[] Encrypt(string plainText)
+        public AesEncryption(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _key = HexStringToByteArray(_configuration["secretData:secretKey"]!); 
+            _iv = HexStringToByteArray(_configuration["secretData:secretIV"]!);
+        }
+        public byte[] Encrypt(string plainText)
         {
             using (Aes aes = Aes.Create())
             {
-                aes.Key = key;
-                aes.IV = iv;
+                aes.Key = _key;
+                aes.IV = _iv;
 
                 using (var encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
                 {
@@ -24,12 +31,12 @@ namespace CompClubAPI
             }
         }
 
-        public static string Decrypt(byte[] cipherText)
+        public string Decrypt(byte[] cipherText)
         {
             using (Aes aes = Aes.Create())
             {
-                aes.Key = key;
-                aes.IV = iv;
+                aes.Key = _key;
+                aes.IV = _iv;
 
                 using (var decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
                 {

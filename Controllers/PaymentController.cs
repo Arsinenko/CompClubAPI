@@ -11,6 +11,7 @@ namespace CompClubAPI.Controllers
     public class PaymentsController : ControllerBase
     {
         private readonly CollegeTaskContext _context;
+        private AesEncryption _encryption;
 
         public PaymentsController(CollegeTaskContext context)
         {
@@ -41,8 +42,8 @@ namespace CompClubAPI.Controllers
             return Ok(new
             {
                 id = payment.Id,
-                cardNumber = AesEncryption.Decrypt(payment.EncryptedCardNumber),
-                cvv = AesEncryption.Decrypt(payment.EncryptedCvv),
+                cardNumber = _encryption.Decrypt(payment.EncryptedCardNumber),
+                cvv = _encryption.Decrypt(payment.EncryptedCvv),
                 createdAt = payment.CreatedAt
             });
         }
@@ -66,8 +67,8 @@ namespace CompClubAPI.Controllers
                     {
                         
                         AccountId = accountId,
-                        EncryptedCardNumber = AesEncryption.Encrypt(paymentModel.CardNumber),
-                        EncryptedCvv = AesEncryption.Encrypt(paymentModel.Cvv)
+                        EncryptedCardNumber = _encryption.Encrypt(paymentModel.CardNumber),
+                        EncryptedCvv = _encryption.Encrypt(paymentModel.Cvv)
                         
                     };
                     _context.Payments.Add(payment);
@@ -75,8 +76,8 @@ namespace CompClubAPI.Controllers
                     return Created("", new { id = payment.Id});
                 }
                 
-                paymentExists.EncryptedCardNumber = AesEncryption.Encrypt(paymentModel.CardNumber);
-                paymentExists.EncryptedCvv = AesEncryption.Encrypt(paymentModel.Cvv);
+                paymentExists.EncryptedCardNumber = _encryption.Encrypt(paymentModel.CardNumber);
+                paymentExists.EncryptedCvv = _encryption.Encrypt(paymentModel.Cvv);
                 
                 _context.Payments.Update(paymentExists);
                 await _context.SaveChangesAsync();

@@ -1,3 +1,4 @@
+using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Mail;
@@ -16,10 +17,13 @@ namespace CompClubAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly CollegeTaskContext _context;
+        private readonly IConfiguration _configuration;
 
-        public AccountController(CollegeTaskContext context)
+
+        public AccountController(CollegeTaskContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // GET: api/Account
@@ -204,7 +208,7 @@ namespace CompClubAPI.Controllers
         {
             
             string to = email;
-            string from = "kimarsinenko@gmail.com";
+            string from = _configuration["secretData:mail"]!;
             string subject = "Your temp password";
             
             
@@ -220,7 +224,8 @@ namespace CompClubAPI.Controllers
             
             SmtpClient client = new SmtpClient("smtp.gmail.com");
             client.Port = 587;
-            client.Credentials = new NetworkCredential("kimarsinenko@gmail.com", "bvhx hlhs oipf vubo "); // TODO make it more secure
+            
+            client.Credentials = new NetworkCredential(_configuration["secretData:mail"], _configuration["secretData:mailPassword"]); // TODO make it more secure
             client.EnableSsl = true;
             
             client.Send(message);
