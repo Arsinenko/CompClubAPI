@@ -2,13 +2,12 @@
 
 public class HireEmployeeModel
 {
-    public DateOnly HireDate { get; set; }
-    public static string Login { get; set; }
-    public static string Password { get; set; }
-    public static string PasspordData { get; set; }
+    public string Login { get; set; }
+    public string Password { get; set; }
+    public string PasspordData { get; set; }
     
-    public static int IdRole { get; set; }
-    public static int IdClub { get; set; }
-    public static int Salary { get; set; }
+    public int IdRole { get; set; }
+    public int IdClub { get; set; }
+    public int Salary { get; set; }
    
 }

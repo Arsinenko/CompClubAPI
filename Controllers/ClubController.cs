@@ -48,7 +48,20 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult> GetClubs()
         {
             List<Club> clubs = await _context.Clubs.ToListAsync();
-            return Ok(clubs);
+            return Ok(new {clubs});
+        }
+
+        [Authorize(Roles = "Client")]
+        [HttpGet("get_visited_clubs")]
+        public async Task<ActionResult> GetVisitedClubs()
+        {
+            int accountId = Convert.ToInt32(User.FindFirst("accountId")!.Value);
+            List<Club> clubs = await _context.Bookings.Where(b => b.TotalCost > 0 && b.AccountId == accountId)
+                .Select(b => b.IdWorkingSpaceNavigation)
+                .Select(ws => ws.IdClubNavigation)
+                .Distinct()
+                .ToListAsync();
+            return Ok(new { clubs });
         }
         
         [HttpGet("get_club_info/{id}")]

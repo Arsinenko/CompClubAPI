@@ -21,19 +21,20 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-        [Authorize(Roles = "Owner,Admin")]
+        
+        
         [HttpPost("hire_employee")]
         public async Task<ActionResult> HireEmployee(HireEmployeeModel employeeModel)
         {
             Employee employee = new Employee
             {
-                Login = HireEmployeeModel.Login,
-                Password = HashHelper.GenerateHash(HireEmployeeModel.Password),
-                PassportData = HireEmployeeModel.PasspordData,
+                Login = employeeModel.Login,
+                Password = HashHelper.GenerateHash(employeeModel.Password),
+                PassportData = employeeModel.PasspordData,
                 HireDate = DateOnly.FromDateTime(DateTime.Now),
-                IdRole = HireEmployeeModel.IdRole,
-                Salary = HireEmployeeModel.Salary,
-                IdClub = HireEmployeeModel.IdClub,
+                IdRole = employeeModel.IdRole,
+                Salary = employeeModel.Salary,
+                IdClub = employeeModel.IdClub,
                 CreatedAt = DateTime.Now
             };
 
