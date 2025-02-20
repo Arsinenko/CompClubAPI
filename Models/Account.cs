@@ -30,7 +30,7 @@ public partial class Account
 
     [JsonIgnore] public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
-    [JsonIgnore] public virtual Client IdClientNavigation { get; set; } = null!;
+    public virtual Client IdClientNavigation { get; set; } = null!;
 
     [JsonIgnore] public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 }

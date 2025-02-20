@@ -36,7 +36,7 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult> GetWorkingSpacesByClub(int idClub)
         {
             List<WorkingSpace> workingSpaces = await _context.WorkingSpaces.Where(ws => ws.IdClub == idClub).ToListAsync();
-            return Ok(workingSpaces);
+            return Ok(new {workingSpaces});
         }
 
         [HttpGet("get_info/{id}")]

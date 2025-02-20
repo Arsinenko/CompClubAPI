@@ -41,8 +41,19 @@ namespace CompClubAPI.Controllers
         [HttpGet("get_feedbacks")]
         public async Task<ActionResult> GetFeedbacks()
         {
-            List<Feedback> feedbacks = await _context.Feedbacks.ToListAsync();
-            return Ok(feedbacks);
+            var result = await (from feedback in _context.Feedbacks
+                join account in _context.Accounts on feedback.AccountId equals account.Id
+                join client in _context.Clients on account.IdClient equals client.Id
+                join club in _context.Clubs on feedback.IdClub equals club.Id
+                select new
+                {
+                    Rating = feedback.Rating,
+                    Comment = feedback.Comment,
+                    Name = client.FirstName,
+                    Address = club.Address,
+                    CreatedAt = feedback.CreatedAt
+                }).ToListAsync();
+            return Ok(new {result});
         }
         
         [Authorize(Roles = "Client")]
