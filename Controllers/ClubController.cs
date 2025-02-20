@@ -68,6 +68,10 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult<Club>> GetClubInfo(int id)
         {
             Club? club = await _context.Clubs.FindAsync(id);
+            if (club == null)
+            {
+                return BadRequest(new { error = "Club not found!" });
+            }
             return Ok(new
             {
                 address = club.Address,
@@ -76,6 +80,19 @@ namespace CompClubAPI.Controllers
                 workingHours = club.WorkingHours,
                 createdAt = club.CreatedAt
             });
+        }
+        [Authorize(Roles = "Owner")]
+        [HttpDelete("delete_club")]
+        public async Task<IActionResult> DeleteClub(int id)
+        {
+            Club? club = await _context.Clubs.FindAsync(id);
+            if (club == null)
+            {
+                return BadRequest(new { error = "Club not found!" });
+            }
+            _context.Clubs.Remove(club);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Club deleted successfully!" });
         }
         
     }
