@@ -1,4 +1,5 @@
 using CompClubAPI.Models;
+using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,18 @@ namespace CompClubAPI.Controllers
         }
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPost("create_working_space")]
-        public async Task<ActionResult> CreateWorkingSpace(WorkingSpace workingSpace)
+        public async Task<ActionResult> CreateWorkingSpace(CreateWorkingSpace model)
         {
-            _context.Add(workingSpace);
+            WorkingSpace workingSpace = new WorkingSpace
+            {
+                IdClub = model.IdClub,
+                Name = model.Name,
+                Status = model.Status,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                TariffId = model.IdTariff
+            };
+            _context.WorkingSpaces.Add(workingSpace);
             await _context.SaveChangesAsync();
             return Created("", new { message = "Working space created successfully!", id = workingSpace.Id });
         }
@@ -29,7 +39,7 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult> GetWorkingSpaces()
         {
             List<WorkingSpace> workingSpaces = await _context.WorkingSpaces.ToListAsync();
-            return Ok(workingSpaces);
+            return Ok(new {workingSpaces});
         }
         
         [HttpGet("working_spaces_by_club/{idClub}")]
@@ -43,7 +53,7 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult> GetWorkingSpace(int id)
         {
             WorkingSpace? workingSpace = await _context.WorkingSpaces.FindAsync(id);
-            return Ok(workingSpace);
+            return Ok(new {workingSpace});
         }
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPut("update/{id}")]
