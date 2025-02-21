@@ -1,4 +1,5 @@
 using CompClubAPI.Models;
+using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,35 @@ namespace CompClubAPI.Controllers
         }
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPost("create_equipment")]
-        public async Task<ActionResult> CreateEquipment(Equipment equipment)
+        public async Task<ActionResult> CreateEquipment(CreateEquipmentModel model)
         {
-            _context.Add(equipment);
+            Equipment equipment = new Equipment
+            {
+                Type = model.Type,
+                Name = model.Name,
+                Specification = model.Specification,
+                PurchasePrice = model.PurchasePrice,
+                PurchaseDate = DateOnly.FromDateTime(DateTime.Now),
+                IdClub = model.IdClub,
+                Status = 1,
+                Quantity = 1
+            };
+            Statistic? statistic = await _context.Statistics.Where(s => s.IdClub == model.IdClub).FirstOrDefaultAsync();
+            if (statistic == null)
+            {
+                return BadRequest(new {error = "Statistic not found!"});
+            }
+            statistic.Finances -= model.PurchasePrice;
+            _context.Update(statistic);
+            CostRevenue costRevenue = new CostRevenue
+            {
+                IdClub = model.IdClub,
+                Amount = model.PurchasePrice,
+                Revenue = false,
+                CreatedAt = DateTime.Now
+            };
+            await _context.CostRevenues.AddAsync(costRevenue);
+            await _context.Equipment.AddAsync(equipment);
             await _context.SaveChangesAsync();
             return Created("", new { message = "Equipment created successfully!", id = equipment.Id });
         }

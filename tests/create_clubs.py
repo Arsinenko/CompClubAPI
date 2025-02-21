@@ -22,8 +22,9 @@ async def get_token(session: ClientSession):
         "login": "Owner",
         "password": "12345678"
     }) as response:
-        print(await response.json())
-        return await response.json().get("token")
+        result = await response.json()
+        token = result["token"]
+        return token
     
 async def create_club(session: ClientSession, token: str, club_number: int):
     async with session.post(BASE_URL + CREATE_CLUB_ENDPOINT,
