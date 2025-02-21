@@ -34,6 +34,44 @@ namespace CompClubAPI.Controllers
         //     await _context.SaveChangesAsync();
         //     return Ok(new {message = "Booking created successfully!"});
         // }
+        [Authorize(Roles = "Client")]
+        [HttpPost("create_advanced_booking")]
+        public async Task<ActionResult> CreateAdvancedBooking(CreateAdvancedBookingModel model)
+        {
+            int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+            var bookingExist = await _context.Bookings.Where(b => b.AccountId == accountId && b.IdStatus == 3).FirstOrDefaultAsync();
+            if (bookingExist != null)
+            {
+                return BadRequest(new {error = "You already have an advanced booking! You can only have one advanced booking at a time."});
+            }
+            Booking booking = new Booking
+            {
+                AccountId = accountId,
+                IdWorkingSpace = model.IdWorkingSpace,
+                StartTime = model.StartTime,
+                EndTime = model.EndTime,
+                IdStatus = 3
+            };
+            _context.Bookings.Add(booking);
+            await _context.SaveChangesAsync();
+            return Ok(new {message = "Advanced booking created successfully!"});
+        }
+        [Authorize]
+        [HttpPost("advanced_booking_cancellation")]
+        public async Task<ActionResult> CancelAdvancedBooking()
+        {
+            int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+            var bookingExist = await _context.Bookings.Where(b => b.AccountId == accountId && b.IdStatus == 3).FirstOrDefaultAsync();
+            if (bookingExist == null)
+            {
+                return BadRequest(new {error = "You don't have an advanced booking!"});
+            }
+
+            _context.Remove(bookingExist);
+            await _context.SaveChangesAsync();
+            return Ok(new {message = "Advanced booking cancelled successfully!"});
+        }
+        
         [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpGet("get_bookings")]
         public async Task<ActionResult> GetBookings()
@@ -60,7 +98,7 @@ namespace CompClubAPI.Controllers
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
             List<Booking> bookings = await _context.Bookings.Where(b => b.AccountId == accountId).ToListAsync();
-            return Ok(bookings);
+            return Ok(new {bookings});
         }
         
         [Authorize(Roles = "Client")]
