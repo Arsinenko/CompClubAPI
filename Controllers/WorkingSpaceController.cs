@@ -53,7 +53,7 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult> GetWorkingSpace(int id)
         {
             WorkingSpace? workingSpace = await _context.WorkingSpaces.FindAsync(id);
-            return Ok(new {workingSpace});
+            return Ok(workingSpace);
         }
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPut("update/{id}")]
