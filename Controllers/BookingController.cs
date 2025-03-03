@@ -39,7 +39,7 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult> CreateAdvancedBooking(CreateAdvancedBookingModel model)
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
-            var bookingExist = await _context.Bookings.Where(b => b.AccountId == accountId && b.IdStatus == 3).FirstOrDefaultAsync();
+            var bookingExist = await _context.Bookings.Where(b => b.AccountId == accountId && b.IdStatus == 1).FirstOrDefaultAsync();
             if (bookingExist != null)
             {
                 return BadRequest(new {error = "You already have an advanced booking! You can only have one advanced booking at a time."});
@@ -50,18 +50,18 @@ namespace CompClubAPI.Controllers
                 IdWorkingSpace = model.IdWorkingSpace,
                 StartTime = model.StartTime,
                 EndTime = model.EndTime,
-                IdStatus = 3
+                IdStatus = 1
             };
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
             return Ok(new {message = "Advanced booking created successfully!"});
         }
         [Authorize]
-        [HttpPost("advanced_booking_cancellation")]
+        [HttpDelete("advanced_booking_cancellation")]
         public async Task<ActionResult> CancelAdvancedBooking()
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
-            var bookingExist = await _context.Bookings.Where(b => b.AccountId == accountId && b.IdStatus == 3).FirstOrDefaultAsync();
+            var bookingExist = await _context.Bookings.Where(b => b.AccountId == accountId && b.IdStatus == 1).FirstOrDefaultAsync();
             if (bookingExist == null)
             {
                 return BadRequest(new {error = "You don't have an advanced booking!"});

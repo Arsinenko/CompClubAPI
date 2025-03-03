@@ -100,8 +100,8 @@ namespace CompClubAPI.Controllers
                 audience: "CompClubAPI",
                 claims: new[]
                 {
-                    new Claim("account_id", employee.Id.ToString()),
-                    new Claim("account_login", employee.Login.ToString()),
+                    new Claim("employee_id", employee.Id.ToString()),
+                    new Claim("employee_login", employee.Login.ToString()),
                     new Claim(ClaimTypes.Role, role)
                 },
 

@@ -12,7 +12,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 MAX_CLUBS = 20
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://10.0.36.239:8000"
 CREATE_WORKING_SPACE_ENDPOINT = "/api/WorkingSpace/create_working_space"
 AUTH_ENDPOINT = "/api/Employee/authorization"
 
