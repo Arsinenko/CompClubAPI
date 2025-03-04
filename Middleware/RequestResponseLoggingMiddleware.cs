@@ -18,19 +18,16 @@ public class RequestResponseLoggingMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        // Запоминаем маршрут
         var route = context.Request.Path;
-
-        // Запоминаем время начала обработки запроса
         var stopwatch = Stopwatch.StartNew();
 
-        // Вызываем следующий middleware в конвейере
         await _next(context);
 
-        // Останавливаем таймер
         stopwatch.Stop();
 
-        // Логируем статус-код и маршрут
-        _logger.LogInformation($"Route: {route}, Status Code: {context.Response.StatusCode}, Time Taken: {stopwatch.ElapsedMilliseconds} ms");
+        var statusCode = context.Response.StatusCode;
+        var colorCode = statusCode >= 200 && statusCode < 300 ? "\x1b[32m" : "\x1b[31m";
+        _logger.LogInformation(
+            $"Route: {route}, Status Code: {colorCode}{statusCode}\x1b[0m, Time Taken: {stopwatch.ElapsedMilliseconds} ms");
     }
 }
