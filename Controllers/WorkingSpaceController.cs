@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using CompClubAPI.Models;
 using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
@@ -41,11 +42,18 @@ namespace CompClubAPI.Controllers
             List<WorkingSpace> workingSpaces = await _context.WorkingSpaces.ToListAsync();
             return Ok(new {workingSpaces});
         }
-        
+        [Authorize(Roles = "Owner,Admin,System_administrator,Client")]
         [HttpGet("working_spaces_by_club/{idClub}")]
         public async Task<ActionResult> GetWorkingSpacesByClub(int idClub)
         {
-            List<WorkingSpace> workingSpaces = await _context.WorkingSpaces.Where(ws => ws.IdClub == idClub).ToListAsync();
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            IQueryable<WorkingSpace> query = _context.WorkingSpaces
+                .Where(ws => ws.IdClub == idClub);
+            if (role != "Client")
+            {
+                query = query.Include(ws => ws.Bookings);
+            }
+            List<WorkingSpace> workingSpaces = await query.ToListAsync();
             return Ok(new {workingSpaces});
         }
 
@@ -57,7 +65,7 @@ namespace CompClubAPI.Controllers
         }
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdateWorkingSpace(int id, WorkingSpace workingSpace)
+        public async Task<IActionResult> UpdateWorkingSpace(int id, CreateWorkingSpace workingSpace)
         {
             WorkingSpace? workingSpaceExists = await _context.WorkingSpaces.FindAsync(id);
 
@@ -69,7 +77,7 @@ namespace CompClubAPI.Controllers
             workingSpaceExists.IdClub = workingSpace.IdClub;
             workingSpaceExists.Name = workingSpace.Name;
             workingSpaceExists.Status = workingSpace.Status;
-            workingSpace.UpdatedAt = DateTime.Now;
+            workingSpaceExists.UpdatedAt = DateTime.Now;
 
             _context.WorkingSpaces.Update(workingSpaceExists);
             await _context.SaveChangesAsync();
