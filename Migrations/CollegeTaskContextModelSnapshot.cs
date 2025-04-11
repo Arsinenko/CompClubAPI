@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CompClubAPI.Migrations
 {
-    [DbContext(typeof(CollegeTaskContext))]
-    partial class CollegeTaskContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(CollegeTaskV2Context))]
+    partial class CollegeTaskV2ContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

@@ -11,9 +11,9 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class BookingController : ControllerBase
     {
-        private readonly CollegeTaskContext _context;
+        private readonly CollegeTaskV2Context _context;
 
-        public BookingController(CollegeTaskContext context)
+        public BookingController(CollegeTaskV2Context context)
         {
             _context = context;
         }

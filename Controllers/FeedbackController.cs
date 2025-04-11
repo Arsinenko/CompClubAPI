@@ -11,9 +11,9 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class FeedbackController : ControllerBase
     {
-        private readonly CollegeTaskContext _context;
+        private readonly CollegeTaskV2Context _context;
 
-        public FeedbackController(CollegeTaskContext context)
+        public FeedbackController(CollegeTaskV2Context context)
         {
             _context = context;
         }

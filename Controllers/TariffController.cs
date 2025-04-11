@@ -10,9 +10,9 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class TariffController : ControllerBase
     {
-        public readonly CollegeTaskContext _context;
+        public readonly CollegeTaskV2Context _context;
 
-        public TariffController(CollegeTaskContext context)
+        public TariffController(CollegeTaskV2Context context)
         {
             _context = context;
         }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CompClubAPI.Migrations
 {
-    [DbContext(typeof(CollegeTaskContext))]
+    [DbContext(typeof(CollegeTaskV2Context))]
     [Migration("20250217091723_Initial")]
     partial class Initial
     {

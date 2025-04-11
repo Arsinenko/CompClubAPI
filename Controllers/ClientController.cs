@@ -15,9 +15,9 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class ClientController : ControllerBase
     {
-        private readonly CollegeTaskContext _context;
+        private readonly CollegeTaskV2Context _context;
 
-        public ClientController(CollegeTaskContext context)
+        public ClientController(CollegeTaskV2Context context)
         {
             _context = context;
         }

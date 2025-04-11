@@ -11,10 +11,10 @@ namespace CompClubAPI.Controllers
     public class SessionController : ControllerBase
     {
         private readonly SessionService _sessionService;
-        private readonly CollegeTaskContext _context;
+        private readonly CollegeTaskV2Context _context;
         
 
-        public SessionController(SessionService sessionService, CollegeTaskContext context)
+        public SessionController(SessionService sessionService, CollegeTaskV2Context context)
         {
             _sessionService = sessionService;
             _context = context;

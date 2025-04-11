@@ -16,11 +16,11 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly CollegeTaskContext _context;
+        private readonly CollegeTaskV2Context _context;
         private readonly IConfiguration _configuration;
 
 
-        public AccountController(CollegeTaskContext context, IConfiguration configuration)
+        public AccountController(CollegeTaskV2Context context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;

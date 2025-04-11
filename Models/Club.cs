@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 namespace CompClubAPI.Models;
 
@@ -20,6 +20,8 @@ public partial class Club
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
+
+    public bool? IsAlive { get; set; }
 
     [JsonIgnore] public virtual ICollection<CostRevenue> CostRevenues { get; set; } = new List<CostRevenue>();
 

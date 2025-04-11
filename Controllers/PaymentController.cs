@@ -10,10 +10,10 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class PaymentsController : ControllerBase
     {
-        private readonly CollegeTaskContext _context;
+        private readonly CollegeTaskV2Context _context;
         private AesEncryption _encryption;
 
-        public PaymentsController(CollegeTaskContext context)
+        public PaymentsController(CollegeTaskV2Context context)
         {
             _context = context;
         }

@@ -43,7 +43,7 @@ public class SessionService
 
         using (var scope = _scopeFactory.CreateScope())
         {
-            var context = scope.ServiceProvider.GetRequiredService<CollegeTaskContext>();
+            var context = scope.ServiceProvider.GetRequiredService<CollegeTaskV2Context>();
 
             Account? account = await context.Accounts.FindAsync(accountId);
 
@@ -105,7 +105,7 @@ public class SessionService
     {
         using (var scope = _scopeFactory.CreateScope())
         {
-            var context = scope.ServiceProvider.GetRequiredService<CollegeTaskContext>();
+            var context = scope.ServiceProvider.GetRequiredService<CollegeTaskV2Context>();
             Booking booking = (await context.Bookings.Where(b => b.AccountId == accountId).FirstOrDefaultAsync())!;
             booking.EndTime = DateTime.Now;
             booking.IdStatus = 2;

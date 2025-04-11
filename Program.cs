@@ -19,7 +19,7 @@ namespace CompClubAPI
             // Add services to the container
             builder.Services.AddLogging();
             builder.Services.AddSingleton<SessionService>();
-            builder.Services.AddDbContext<CollegeTaskContext>();
+            builder.Services.AddDbContext<CollegeTaskV2Context>();
             builder.Services.AddRazorPages();
             builder.Services.AddCors(options =>
             {

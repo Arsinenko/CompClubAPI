@@ -15,9 +15,9 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private readonly CollegeTaskContext _context;
+        private readonly CollegeTaskV2Context _context;
 
-        public EmployeeController(CollegeTaskContext context)
+        public EmployeeController(CollegeTaskV2Context context)
         {
             _context = context;
         }
@@ -46,14 +46,16 @@ namespace CompClubAPI.Controllers
         [HttpGet("get_employees")]
         public async Task<ActionResult> GetEmployees()
         {
-            return Ok(await _context.Employees.ToListAsync());
+            List<Employee> employees = await _context.Employees.ToListAsync();
+            return Ok(new {employees = employees});
             
         }
         [Authorize(Roles = "Owner,Admin")]
         [HttpGet("get_employees_by_club/{id}")]
         public async Task<ActionResult> GetEmployeesByClub(int id)
         {
-            return Ok(await _context.Employees.Where(e => e.IdClub == id).ToListAsync());
+            List<Employee> employees = await _context.Employees.Where(e => e.IdClub == id).ToListAsync();
+            return Ok(new { employees = employees });
         }
         [Authorize(Roles = "Owner")]
         [HttpPost("fire_employee")]

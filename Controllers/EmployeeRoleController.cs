@@ -10,9 +10,9 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class EmployeeRoleController : ControllerBase
     {
-        private readonly CollegeTaskContext _context;
+        private readonly CollegeTaskV2Context _context;
 
-        public EmployeeRoleController(CollegeTaskContext context)
+        public EmployeeRoleController(CollegeTaskV2Context context)
         {
             _context = context;
         }

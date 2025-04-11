@@ -10,9 +10,9 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class StatisticController : ControllerBase
     {
-        private readonly CollegeTaskContext _context;
+        private readonly CollegeTaskV2Context _context;
 
-        public StatisticController(CollegeTaskContext context)
+        public StatisticController(CollegeTaskV2Context context)
         {
             _context = context;
         }

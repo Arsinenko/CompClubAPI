@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using CompClubAPI.Models;
 using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
@@ -11,9 +12,9 @@ namespace CompClubAPI.Controllers
     [ApiController]
     public class ClubController : ControllerBase
     {
-        private readonly CollegeTaskContext _context;
+        private readonly CollegeTaskV2Context _context;
 
-        public ClubController(CollegeTaskContext context)
+        public ClubController(CollegeTaskV2Context context)
         {
             _context = context;
         }
@@ -26,6 +27,7 @@ namespace CompClubAPI.Controllers
                 Address = model.Address,
                 Name = model.Name,
                 Phone = model.Phone,
+                WorkingHours = model.WorkingHours,
             };
             _context.Clubs.Add(club);
             await _context.SaveChangesAsync();
@@ -82,7 +84,7 @@ namespace CompClubAPI.Controllers
             });
         }
         [Authorize(Roles = "Owner")]
-        [HttpDelete("delete_club")]
+        [HttpDelete("delete_club/{id}")]
         public async Task<IActionResult> DeleteClub(int id)
         {
             Club? club = await _context.Clubs.FindAsync(id);
@@ -93,6 +95,25 @@ namespace CompClubAPI.Controllers
             _context.Clubs.Remove(club);
             await _context.SaveChangesAsync();
             return Ok(new { message = "Club deleted successfully!" });
+        }
+
+        [Authorize(Roles = "Admin, Owner")]
+        [HttpPut("update_club/{id}")]
+        public async Task<ActionResult<Club>> UpdateClub(int id, UpdateClubModel model)
+        {
+            // var role = FindFristValue(Claim.Types)
+            Club? club = await _context.Clubs.FindAsync(id);
+            if (club == null)
+            {
+                return BadRequest(new { error = "Club not found!" });
+            }
+            club.Address = model.Address;
+            club.Name = model.Name;
+            club.Phone = model.Phone;
+            club.WorkingHours = model.WorkingHours;
+            club.UpdatedAt = DateTime.Now;
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Club updated successfully!" });
         }
         
     }
