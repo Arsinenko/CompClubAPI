@@ -49,7 +49,7 @@ namespace CompClubAPI.Controllers
         [HttpGet("get_clubs")]
         public async Task<ActionResult> GetClubs()
         {
-            List<Club> clubs = await _context.Clubs.ToListAsync();
+            List<Club> clubs = await _context.Clubs.Where(c => c.IsAlive == true).ToListAsync();
             return Ok(new {clubs});
         }
 
@@ -92,9 +92,9 @@ namespace CompClubAPI.Controllers
             {
                 return BadRequest(new { error = "Club not found!" });
             }
-            _context.Clubs.Remove(club);
+            club.IsAlive = false;
             await _context.SaveChangesAsync();
-            return Ok(new { message = "Club deleted successfully!" });
+            return Ok(new { error = "Club deleted successfully!" });
         }
 
         [Authorize(Roles = "Admin, Owner")]

@@ -58,7 +58,7 @@ namespace CompClubAPI.Controllers
             return Ok(new { employees = employees });
         }
         [Authorize(Roles = "Owner")]
-        [HttpPost("fire_employee")]
+        [HttpPost("fire_employee/{id}")]
         public async Task<ActionResult> FireEmployee(int id)
         {
             Employee? employee = await _context.Employees.FindAsync(id);
@@ -70,6 +70,42 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Employee fired successfully!" });
         }
+        //update employee password
+        [HttpPut("update_employee_password")]
+        public async Task<ActionResult> UpdatePassword([FromBody]string password)
+        {
+            int id = Convert.ToInt32(User.FindFirst("employee_id")?.Value);
+            Employee? employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
+            {
+                return BadRequest(new { message = "Employee not found!" });
+            }
+            var hash = HashHelper.GenerateHash(password);
+            employee.Password = hash;
+            employee.PasswordChangedAt = DateTime.Now;
+            _context.Entry(employee).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Password updated successfully!" });
+        }
+
+        [Authorize(Roles = "Admin,Owner")]
+        [HttpPut("update_employee/{id}")]
+        public async Task<ActionResult> UpdateEmployee(int id, UpdateEmployeeModel employeeModel)
+        {
+            Employee? employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
+            {
+                return BadRequest(new { message = "Employee not found!" });
+            }
+            employee.Login = employeeModel.Login;
+            employee.Salary = employeeModel.Salary;
+            employee.IdRole = employeeModel.IdRole;
+            employee.IdClub = employeeModel.IdClub;
+            _context.Entry(employee).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Employee updated successfully!" });
+        }
+        
 
         [HttpPost("authorization")]
         public async Task<ActionResult> Authorization(AuthModel authModel)
