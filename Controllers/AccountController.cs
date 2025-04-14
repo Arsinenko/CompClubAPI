@@ -28,10 +28,11 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Account
+        [Authorize(Roles = "Admin, Owner")]
         [HttpGet("get_accounts")]
         public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
         {
-            List<Account> accounts = await _context.Accounts.ToListAsync();
+            List<Account> accounts = await _context.Accounts.Include(a => a.IdClientNavigation).ToListAsync();
             return Ok(new { accounts });
         }
 
@@ -55,20 +56,20 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult<Account>> GetAccountInfo()
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
-            var AccountClient = await _context.Accounts.Where(a => a.Id == accountId).Include(a => a.IdClientNavigation).FirstOrDefaultAsync();
+            var accountClient = await _context.Accounts.Where(a => a.Id == accountId).Include(a => a.IdClientNavigation).FirstOrDefaultAsync();
 
-            if (AccountClient == null)
+            if (accountClient == null)
             {
                 return NotFound();
             }
 
-            return Ok(AccountClient);
+            return Ok(accountClient);
         }
         
         
         // PUT: api/Account/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize(Roles = "Admin")] // for employee
+        [Authorize(Roles = "Admin, Owner")] // for employee
         [HttpPut("update/{id}")]
         public async Task<IActionResult> PutAccount(int id, UpdateAccountByIdModel accountModel)
         {
@@ -113,7 +114,7 @@ namespace CompClubAPI.Controllers
             return Ok(new {message = "Account updated successfully!"});
         }
 
-        
+        [Authorize(Roles = "Admin,Owner")]
         [HttpPost("add_balance")]
         public async Task<ActionResult> AddBalance(AddBalanceModel balanceModel)
         {
@@ -140,7 +141,7 @@ namespace CompClubAPI.Controllers
             return Ok(new {message = "Balance updated successfully!"});
         }
         
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Owner")]
         [HttpPost("add_balance_by_id/{id}")]
         public async Task<ActionResult> AddBalanceById(int id, [FromQuery] int idClub, decimal money)
         {
@@ -228,6 +229,23 @@ namespace CompClubAPI.Controllers
             return Ok(new {message = "Password sent to email"});
         }
 
+        [Authorize(Roles = "Admin,Owner")]
+        [HttpPut("deactivate_account/{id}")]
+        public async Task<ActionResult> DeactivateAccount(int id)
+        {
+            Account account = await _context.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
+            if (account == null)
+            {
+                return BadRequest(new { error = "Account not found!" });
+            }
+
+            account.IsAlive = false;
+            account.UpdatedAt = DateTime.Now;
+            _context.Accounts.Update(account);
+            await _context.SaveChangesAsync();
+            return Ok(new {message = "Account deactivated successfully!"});
+        }
+
         [HttpPost("authentication")]
         public async Task<ActionResult> AuthClient(AuthModel authModel)
         {
@@ -237,6 +255,11 @@ namespace CompClubAPI.Controllers
             if (account == null)
             {
                 return NotFound(new {error = "Client not found!"});
+            }
+
+            if (account.IsAlive == false)
+            {
+                return Unauthorized(new {error = "You are not logged in. Your account deactivated."});
             }
 
             account.LastLogin = DateTime.Now;

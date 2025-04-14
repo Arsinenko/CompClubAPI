@@ -46,27 +46,21 @@ namespace CompClubAPI.Controllers
 
         // PUT: api/Client/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("update_client")]
-        public async Task<IActionResult> PutClient(int id, CreateClient clientModel)
+        [Authorize(Roles = "Admin,Owner")]
+        [HttpPut("update_client/{id}")]
+        public async Task<ActionResult> PutClient(int id, UpdateClientModel updateModel)
         {
-            int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
-            Client? client = await _context.Accounts
-                .Where(a => a.Id == accountId)
-                .Select(a => a.IdClientNavigation)
-                .FirstOrDefaultAsync();
+            var client = await _context.Clients.FindAsync(id);
             if (client == null)
             {
-                return NotFound( new {message = "Client not found!"});
+                return BadRequest(new { message = "Client not found." });
             }
+            client.FirstName = updateModel.FirstName;
+            client.LastName = updateModel.LastName;
+            client.MiddleName = string.IsNullOrEmpty(updateModel.MiddleName) ? client.MiddleName : updateModel.MiddleName;
             
-            client.FirstName = clientModel.FirstName;
-            client.MiddleName = clientModel.MiddleName;
-            client.LastName = clientModel.LastName;
-            client.UpdatedAt = DateTime.Now;
-            
-            _context.Clients.Update(client);
             await _context.SaveChangesAsync();
-            return Ok(new {message = $"Client with id {client.Id} updated successfully!"});
+            return Ok(new {message = "Client updated"});
         }
 
         // POST: api/Client
