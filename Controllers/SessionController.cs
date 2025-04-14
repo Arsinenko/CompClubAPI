@@ -1,3 +1,4 @@
+using CompClubAPI.Context;
 using CompClubAPI.Models;
 using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;

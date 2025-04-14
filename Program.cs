@@ -3,6 +3,7 @@ using CompClubAPI.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CompClubAPI.Context;
 using CompClubAPI.Middleware;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Cors;

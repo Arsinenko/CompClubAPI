@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CompClubAPI.Context;
 
-public partial class MyDbContext : DbContext
+public partial class CollegeTaskV2Context : DbContext
 {
-    public MyDbContext()
+    public CollegeTaskV2Context()
     {
     }
 
-    public MyDbContext(DbContextOptions<MyDbContext> options)
+    public CollegeTaskV2Context(DbContextOptions<CollegeTaskV2Context> options)
         : base(options)
     {
     }

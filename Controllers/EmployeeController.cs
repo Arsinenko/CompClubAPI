@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using CompClubAPI.Context;
 using CompClubAPI.Models;
 using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
