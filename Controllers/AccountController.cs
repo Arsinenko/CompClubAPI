@@ -30,7 +30,8 @@ namespace CompClubAPI.Controllers
         [HttpGet("get_accounts")]
         public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
         {
-            return await _context.Accounts.ToListAsync();
+            List<Account> accounts = await _context.Accounts.ToListAsync();
+            return Ok(new { accounts });
         }
 
         // GET: api/Account/5
@@ -68,34 +69,22 @@ namespace CompClubAPI.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Admin")] // for employee
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> PutAccount(int id, Account account)
+        public async Task<IActionResult> PutAccount(int id, UpdateAccountByIdModel accountModel)
         {
-            if (id != account.Id)
+            Account? account = await _context.Accounts.FindAsync(id);
+            if (account == null)
             {
-                return BadRequest();
+                return BadRequest(new { message = "Account not found." });
             }
 
+            account.Login = string.IsNullOrWhiteSpace(accountModel.Login) ? account.Login : accountModel.Login;
+            account.Email = string.IsNullOrWhiteSpace(accountModel.Email) ? account.Email : accountModel.Email;
+            account.Password = string.IsNullOrWhiteSpace(accountModel.Password) ? account.Password : HashHelper.GenerateHash(accountModel.Password);
+            
             _context.Entry(account).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AccountExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Account updated" });
         }
-
 
         [Authorize(Roles = "Client")]
         [HttpPut("update")]
@@ -108,9 +97,15 @@ namespace CompClubAPI.Controllers
                 return BadRequest(new { error = "Account not found!" });
             }
 
-            account.Login = accountModel.Login;
-            account.Password = HashHelper.GenerateHash(accountModel.Password); 
-            account.Balance = accountModel.Balance;
+            if (!string.IsNullOrEmpty(accountModel.Login))
+            {
+                account.Login = accountModel.Login;
+            }
+
+            if (!string.IsNullOrEmpty(accountModel.Password))
+            {
+                account.Password = HashHelper.GenerateHash(accountModel.Password); 
+            }
             account.UpdatedAt = DateTime.Now;
             _context.Accounts.Update(account);
             await _context.SaveChangesAsync();
