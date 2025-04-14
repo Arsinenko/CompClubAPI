@@ -54,8 +54,21 @@ namespace CompClubAPI.Controllers
         [HttpGet("get_employees_by_club/{id}")]
         public async Task<ActionResult> GetEmployeesByClub(int id)
         {
-            List<Employee> employees = await _context.Employees.Where(e => e.IdClub == id).ToListAsync();
-            return Ok(new { employees = employees });
+            if (User.FindFirstValue(ClaimTypes.Role) == "Owner")
+            {
+                List<Employee> employees = await _context.Employees.Where(e => e.IdClub == id).ToListAsync();
+                return Ok(new { employees = employees });
+            }
+
+            var employees_admin = await _context.Employees.Where(e => e.IdClub == id).Select(e => new
+            {
+                id = e.Id,
+                login = e.Login,
+                salary = e.Salary,
+                hireDate = e.HireDate,
+
+            }).ToListAsync();
+            return Ok(new { employees_admin });
         }
         [Authorize(Roles = "Owner")]
         [HttpPost("fire_employee/{id}")]
