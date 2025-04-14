@@ -10,7 +10,7 @@ public partial class Employee
 
     public string Login { get; set; } = null!;
 
-    public byte[] Password { get; set; } = null!;
+    [JsonIgnore]public byte[] Password { get; set; } = null!;
 
     public string PassportData { get; set; } = null!;
 

@@ -7,6 +7,7 @@ using CompClubAPI.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CompClubAPI.Models;
+using CompClubAPI.ResponseSchema;
 using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -39,13 +40,15 @@ namespace CompClubAPI.Controllers
         // GET: api/Account/5
         [Authorize(Roles = "Admin")]
         [HttpGet("get_info/{id}")]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult<Account>> GetAccount(int id)
         {
             var account = await _context.Accounts.FindAsync(id);
 
             if (account == null)
             {
-                return NotFound();
+                return BadRequest(new {error = "Account not found"});
             }
 
             return account;
@@ -176,14 +179,20 @@ namespace CompClubAPI.Controllers
 
         [Authorize(Roles = "Client")]
         [HttpGet("balance_history")]
-        public async Task<ActionResult> GetBalanceHistory()
+        public async Task<ActionResult<BalanceHistoryResponse>> GetBalanceHistory()
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
             List<BalanceHistory> history = await _context.BalanceHistories.Where(h => h.AccountId == accountId).ToListAsync();
-            return Ok(history);
+            BalanceHistoryResponse response = new BalanceHistoryResponse
+            {
+                History = history
+            };
+            return Ok(response);
         }
         [Authorize(Roles = "Client")]
         [HttpPost("change_password")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)] // Успешный ответ
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)] // Ошибка 400
         public async Task<ActionResult> ChangePassword(ChangePasswordModel changePasswordModel)
         {
             // for authorized users only
