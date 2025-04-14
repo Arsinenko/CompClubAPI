@@ -26,7 +26,7 @@ public partial class Account
 
     public string? Email { get; set; }
 
-    [JsonIgnore] public virtual ICollection<BalanceHistory> BalanceHistories { get; set; } = new List<BalanceHistory>();
+    public bool? IsAlive { get; set; }
 
     [JsonIgnore] public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
