@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 

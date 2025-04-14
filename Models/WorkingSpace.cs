@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace CompClubAPI.Models;
 
@@ -20,7 +20,7 @@ public partial class WorkingSpace
 
     public int? TariffId { get; set; }
 
-    [JsonIgnore] public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
     [JsonIgnore] public virtual Club IdClubNavigation { get; set; } = null!;
 
