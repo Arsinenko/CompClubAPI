@@ -1,5 +1,6 @@
 using CompClubAPI.Context;
 using CompClubAPI.Models;
+using CompClubAPI.ResponseSchema;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -53,9 +54,14 @@ namespace CompClubAPI.Controllers
         }
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpGet("get_roles")]
-        public async Task<ActionResult> GetRoles()
+        public async Task<ActionResult<GetRolesResponse>> GetRoles()
         {
-            return Ok(await _context.Roles.ToListAsync());
+            List<Role> roles = await _context.Roles.ToListAsync();
+            GetRolesResponse response = new GetRolesResponse
+            {
+                Roles = roles
+            };
+            return Ok(response);
         }
     }
 }

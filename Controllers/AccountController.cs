@@ -48,14 +48,16 @@ namespace CompClubAPI.Controllers
 
             if (account == null)
             {
-                return BadRequest(new {error = "Account not found"});
+                return BadRequest(new ErrorResponse{Error = "Account not found."});
             }
 
-            return account;
+            return Ok(new {account});
         }
         
         [Authorize(Roles = "Client")]
         [HttpGet("get_info")]
+        [ProducesResponseType(typeof(Account), StatusCodes.Status200OK)] // Успешный ответ[]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)] // Ошибка 400
         public async Task<ActionResult<Account>> GetAccountInfo()
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
@@ -63,7 +65,7 @@ namespace CompClubAPI.Controllers
 
             if (accountClient == null)
             {
-                return NotFound();
+                return BadRequest(new ErrorResponse{Error = "Account not found."});
             }
 
             return Ok(accountClient);
@@ -74,12 +76,14 @@ namespace CompClubAPI.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Admin, Owner")] // for employee
         [HttpPut("update/{id}")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)] // Успешный ответ[]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)] // Ошибка 400
         public async Task<IActionResult> PutAccount(int id, UpdateAccountByIdModel accountModel)
         {
             Account? account = await _context.Accounts.FindAsync(id);
             if (account == null)
             {
-                return BadRequest(new { message = "Account not found." });
+                return BadRequest(new ErrorResponse{ Error = "Account not found." });
             }
 
             account.Login = string.IsNullOrWhiteSpace(accountModel.Login) ? account.Login : accountModel.Login;
@@ -93,6 +97,8 @@ namespace CompClubAPI.Controllers
 
         [Authorize(Roles = "Client")]
         [HttpPut("update")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]// Успешный ответ
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]// Ошибка 400
         public async Task<IActionResult> PutAccount(UpdateAccountModel accountModel)
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
@@ -119,6 +125,8 @@ namespace CompClubAPI.Controllers
 
         [Authorize(Roles = "Admin,Owner")]
         [HttpPost("add_balance")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]// Успешный ответ
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]// Ошибка 400
         public async Task<ActionResult> AddBalance(AddBalanceModel balanceModel)
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
@@ -146,6 +154,8 @@ namespace CompClubAPI.Controllers
         
         [Authorize(Roles = "Admin,Owner")]
         [HttpPost("add_balance_by_id/{id}")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]// Успешный ответ
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]// Ошибка 400
         public async Task<ActionResult> AddBalanceById(int id, [FromQuery] int idClub, decimal money)
         {
             Account? account = await _context.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
@@ -179,6 +189,7 @@ namespace CompClubAPI.Controllers
 
         [Authorize(Roles = "Client")]
         [HttpGet("balance_history")]
+        [ProducesResponseType(typeof(BalanceHistoryResponse), StatusCodes.Status200OK)]// Успешный ответ
         public async Task<ActionResult<BalanceHistoryResponse>> GetBalanceHistory()
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
@@ -210,6 +221,7 @@ namespace CompClubAPI.Controllers
         }
 
         [HttpPost("change_password_by_email/{email}")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)] // Успешный ответ
         public async Task<ActionResult> ChangePasswordByEmail(string email)
         {
             
@@ -240,6 +252,8 @@ namespace CompClubAPI.Controllers
 
         [Authorize(Roles = "Admin,Owner")]
         [HttpPut("deactivate_account/{id}")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)] // Успешный ответ
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)] // Ошибка 400
         public async Task<ActionResult> DeactivateAccount(int id)
         {
             Account account = await _context.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
@@ -256,6 +270,8 @@ namespace CompClubAPI.Controllers
         }
 
         [HttpPost("authentication")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)] // Успешный ответ
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)] // Ошибка 400
         public async Task<ActionResult> AuthClient(AuthModel authModel)
         {
             byte[] passwordHash = HashHelper.GenerateHash(authModel.password);
@@ -263,7 +279,7 @@ namespace CompClubAPI.Controllers
             Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.Login == authModel.login && a.Password.SequenceEqual(passwordHash));
             if (account == null)
             {
-                return NotFound(new {error = "Client not found!"});
+                return BadRequest(new {error = "Client not found!"});
             }
 
             if (account.IsAlive == false)
