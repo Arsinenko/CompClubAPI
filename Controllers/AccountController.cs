@@ -41,8 +41,8 @@ namespace CompClubAPI.Controllers
         [Authorize(Roles = "Admin")]
         [HttpGet("get_info/{id}")]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Account>> GetAccount(int id)
+        [ProducesResponseType(typeof(AccountGetInfoResponseSchema), StatusCodes.Status200OK)]
+        public async Task<ActionResult<AccountGetInfoResponseSchema>> GetAccount(int id)
         {
             var account = await _context.Accounts.FindAsync(id);
 
@@ -51,7 +51,12 @@ namespace CompClubAPI.Controllers
                 return BadRequest(new ErrorResponse{Error = "Account not found."});
             }
 
-            return Ok(new {account});
+            AccountGetInfoResponseSchema response = new AccountGetInfoResponseSchema
+            {
+                Account = account
+            };
+
+            return Ok(response);
         }
         
         [Authorize(Roles = "Client")]
@@ -202,8 +207,8 @@ namespace CompClubAPI.Controllers
         }
         [Authorize(Roles = "Client")]
         [HttpPost("change_password")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)] // Успешный ответ
-        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)] // Ошибка 400
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)] // Успешный ответ
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)] // Ошибка 400
         public async Task<ActionResult> ChangePassword(ChangePasswordModel changePasswordModel)
         {
             // for authorized users only
@@ -221,7 +226,7 @@ namespace CompClubAPI.Controllers
         }
 
         [HttpPost("change_password_by_email/{email}")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)] // Успешный ответ
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)] // Успешный ответ
         public async Task<ActionResult> ChangePasswordByEmail(string email)
         {
             
@@ -256,7 +261,7 @@ namespace CompClubAPI.Controllers
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)] // Ошибка 400
         public async Task<ActionResult> DeactivateAccount(int id)
         {
-            Account account = await _context.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
+            Account? account = await _context.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
             if (account == null)
             {
                 return BadRequest(new { error = "Account not found!" });
@@ -266,11 +271,12 @@ namespace CompClubAPI.Controllers
             account.UpdatedAt = DateTime.Now;
             _context.Accounts.Update(account);
             await _context.SaveChangesAsync();
-            return Ok(new {message = "Account deactivated successfully!"});
+            return Ok(new MessageResponse{Message = "Account deactivated successfully!"});
         }
 
         [HttpPost("authentication")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)] // Успешный ответ
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)] // Успешный ответ
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)] // Ошибка 400
         public async Task<ActionResult> AuthClient(AuthModel authModel)
         {
@@ -312,11 +318,6 @@ namespace CompClubAPI.Controllers
                 signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private bool AccountExists(int id)
-        {
-            return _context.Accounts.Any(e => e.Id == id);
         }
     }
 }

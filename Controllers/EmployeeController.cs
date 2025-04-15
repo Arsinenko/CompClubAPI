@@ -85,10 +85,15 @@ namespace CompClubAPI.Controllers
             return Ok(new { message = "Employee fired successfully!" });
         }
         //update employee password
+        [Authorize(Roles = "Owner,Admin,Salesperson")]
         [HttpPut("update_employee_password")]
         public async Task<ActionResult> UpdatePassword([FromBody]string password)
         {
-            int id = Convert.ToInt32(User.FindFirst("employee_id")?.Value);
+            int? id = Convert.ToInt32(User.FindFirst("employee_id")?.Value);
+            if (id == null)
+            {
+                return Unauthorized();
+            }
             Employee? employee = await _context.Employees.FindAsync(id);
             if (employee == null)
             {
