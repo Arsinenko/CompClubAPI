@@ -146,11 +146,17 @@ namespace CompClubAPI.Controllers
         /// </summary>
         [Authorize(Roles = "Client")]
         [HttpGet("get_info/{id}")]
+        [ProducesResponseType(typeof(BookingResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> GetBooking(int id)
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
             Booking? booking = await _context.Bookings.Where(b => b.Id == id && b.AccountId == accountId).FirstOrDefaultAsync();
-            return Ok(booking);
+            if (booking == null)
+            {
+                return BadRequest(new {error = "Booking not found or not yours!"});
+            }
+            return Ok(new {booking});
         }
     }
 }

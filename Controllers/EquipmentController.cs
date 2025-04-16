@@ -1,5 +1,6 @@
 using CompClubAPI.Context;
 using CompClubAPI.Models;
+using CompClubAPI.ResponseSchema;
 using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -133,6 +134,23 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new
                 { message = $"Equipment maintenance with id {equipmentMaintenance.Id} updated successfully!" });
+        }
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
+        [HttpGet("get_equipment")]
+        [ProducesResponseType(typeof(GetEquipmentSchema), StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<Equipment>>> GetEquipment()
+        {
+            List<Equipment> equipments = await _context.Equipment.ToListAsync();
+            return Ok(new {equipments});
+        }
+
+        [Authorize(Roles = "Owner,Admin,System_administrator")]
+        [HttpGet("get_equipment_by_club/{idClub}")]
+        [ProducesResponseType(typeof(GetEquipmentSchema), StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<Equipment>>> GetEquipmentByClub(int idClub)
+        {
+            List<Equipment> equipments = await _context.Equipment.Where(e => e.IdClub == idClub).ToListAsync();
+            return Ok(new {equipments});
         }
     }
 }

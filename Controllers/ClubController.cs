@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using CompClubAPI.Context;
 using CompClubAPI.Models;
+using CompClubAPI.ResponseSchema;
 using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,8 +20,15 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-        [Authorize(Roles = "Owner,Admin")]
+        
+        /// <summary>
+        /// Создание клуба с его статистикой. Доступно только для владельцев.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Owner")]
         [HttpPost("create_club")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status201Created)]
         public async Task<ActionResult<Club>> CreateClub(CreateClubModel model)
         {
             Club club = new Club
@@ -46,19 +54,28 @@ namespace CompClubAPI.Controllers
                 idStatisctic = statistic.Id
             });
         }
-        
+        /// <summary>
+        /// Получение информации о клубах. Доступно для всех.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("get_clubs")]
+        [ProducesResponseType(typeof(GetClubsResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetClubs()
         {
             List<Club> clubs = await _context.Clubs.Where(c => c.IsAlive == true).ToListAsync();
             return Ok(new {clubs});
         }
-
+        
+        /// <summary>
+        /// Получение информации о клубах, посещенных текущим клиентом.
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "Client")]
         [HttpGet("get_visited_clubs")]
+        [ProducesResponseType(typeof(GetClubsResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetVisitedClubs()
         {
-            int accountId = Convert.ToInt32(User.FindFirst("accountId")!.Value);
+            int accountId = Convert.ToInt32(User.FindFirst("account_id")!.Value);
             List<Club> clubs = await _context.Bookings.Where(b => b.TotalCost > 0 && b.AccountId == accountId)
                 .Select(b => b.IdWorkingSpaceNavigation)
                 .Select(ws => ws.IdClubNavigation)
