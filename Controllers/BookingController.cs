@@ -1,5 +1,6 @@
 using CompClubAPI.Context;
 using CompClubAPI.Models;
+using CompClubAPI.ResponseSchema;
 using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +26,8 @@ namespace CompClubAPI.Controllers
         /// </summary>
         [Authorize(Roles = "Client")]
         [HttpPost("create_advanced_booking")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateAdvancedBooking(CreateAdvancedBookingModel model)
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
@@ -51,6 +54,8 @@ namespace CompClubAPI.Controllers
         /// </summary>
         [Authorize]
         [HttpDelete("advanced_booking_cancellation")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CancelAdvancedBooking()
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
@@ -71,10 +76,16 @@ namespace CompClubAPI.Controllers
         /// </summary>
         [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpGet("get_bookings")]
-        public async Task<ActionResult> GetBookings()
+        [ProducesResponseType(typeof(BookingsResponse), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
         {
             List<Booking> bookings = await _context.Bookings.ToListAsync();
-            return Ok(bookings);
+            BookingsResponse response = new BookingsResponse
+            {
+                Bookings = bookings
+            };
+            
+            return Ok(response);
         }
 
         /// <summary>
@@ -83,14 +94,17 @@ namespace CompClubAPI.Controllers
         /// </summary>
         [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpGet("get_booking/{id}")]
+        [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> GetBookingById(int id)
         {
             Booking? booking = await _context.Bookings.FindAsync(id);
             if (booking == null)
             {
-                return NotFound("Booking not found");
+                return BadRequest(new {error = "Booking not found!"});
             }
-            return Ok(booking);
+            
+            return Ok(new {booking});
         }
 
         /// <summary>
@@ -98,6 +112,7 @@ namespace CompClubAPI.Controllers
         /// </summary>
         [Authorize(Roles = "Client")]
         [HttpGet("get_client_bookings")]
+        [ProducesResponseType(typeof(BookingsResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetClientBookings()
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
@@ -110,6 +125,8 @@ namespace CompClubAPI.Controllers
         /// </summary>
         [Authorize(Roles = "Client")]
         [HttpDelete("delete/{id}")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteBooking(int id)
         {
             Booking? booking = await _context.Bookings.Where(b =>
