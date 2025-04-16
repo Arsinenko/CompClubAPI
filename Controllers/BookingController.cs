@@ -18,23 +18,11 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-        // [Authorize(Roles = "Client")]
-        // [HttpPost("create_booking")]
-        // public async Task<ActionResult> CreateBooking(CreateBookingModel bookingModel)
-        // {
-        //     Booking booking = new Booking();
-        //     
-        //     booking.AccountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
-        //     booking.IdWorkingSpace = bookingModel.IdWorkingSpace;
-        //     booking.StartTime = bookingModel.StartTime;
-        //     booking.EndTime = bookingModel.EndTime;
-        //     booking.TotalCost = bookingModel.TotalCost;
-        //     booking.IdPaymentMethod = bookingModel.IdPaymentMethod;
-        //     
-        //     _context.Bookings.Add(booking);
-        //     await _context.SaveChangesAsync();
-        //     return Ok(new {message = "Booking created successfully!"});
-        // }
+
+        /// <summary>
+        /// Создание предварительного бронирования (одного активного на аккаунт).
+        /// Доступно только для клиентов.
+        /// </summary>
         [Authorize(Roles = "Client")]
         [HttpPost("create_advanced_booking")]
         public async Task<ActionResult> CreateAdvancedBooking(CreateAdvancedBookingModel model)
@@ -57,6 +45,10 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new {message = "Advanced booking created successfully!"});
         }
+
+        /// <summary>
+        /// Отмена предварительного бронирования клиента.
+        /// </summary>
         [Authorize]
         [HttpDelete("advanced_booking_cancellation")]
         public async Task<ActionResult> CancelAdvancedBooking()
@@ -72,7 +64,11 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new {message = "Advanced booking cancelled successfully!"});
         }
-        
+
+        /// <summary>
+        /// Получение списка всех бронирований.
+        /// Доступно для владельцев, администраторов и маркетологов.
+        /// </summary>
         [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpGet("get_bookings")]
         public async Task<ActionResult> GetBookings()
@@ -81,6 +77,10 @@ namespace CompClubAPI.Controllers
             return Ok(bookings);
         }
 
+        /// <summary>
+        /// Получение информации о конкретном бронировании по ID.
+        /// Доступно для владельцев, администраторов и маркетологов.
+        /// </summary>
         [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpGet("get_booking/{id}")]
         public async Task<ActionResult> GetBookingById(int id)
@@ -92,7 +92,10 @@ namespace CompClubAPI.Controllers
             }
             return Ok(booking);
         }
-        
+
+        /// <summary>
+        /// Получение всех бронирований текущего клиента.
+        /// </summary>
         [Authorize(Roles = "Client")]
         [HttpGet("get_client_bookings")]
         public async Task<ActionResult> GetClientBookings()
@@ -101,7 +104,10 @@ namespace CompClubAPI.Controllers
             List<Booking> bookings = await _context.Bookings.Where(b => b.AccountId == accountId).ToListAsync();
             return Ok(new {bookings});
         }
-        
+
+        /// <summary>
+        /// Удаление конкретного бронирования клиента по ID.
+        /// </summary>
         [Authorize(Roles = "Client")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteBooking(int id)
@@ -117,7 +123,10 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new {message = "Booking deleted successfully!"});
         }
-        
+
+        /// <summary>
+        /// Получение информации о конкретном бронировании текущего клиента по ID.
+        /// </summary>
         [Authorize(Roles = "Client")]
         [HttpGet("get_info/{id}")]
         public async Task<ActionResult> GetBooking(int id)
@@ -126,6 +135,5 @@ namespace CompClubAPI.Controllers
             Booking? booking = await _context.Bookings.Where(b => b.Id == id && b.AccountId == accountId).FirstOrDefaultAsync();
             return Ok(booking);
         }
-        
     }
 }

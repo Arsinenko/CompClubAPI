@@ -28,7 +28,13 @@ namespace CompClubAPI.Controllers
             _configuration = configuration;
         }
 
-        // GET: api/Account
+        /// <summary>
+        /// Получение списка всех аккаунтов (только для администратора или владельца).
+        /// </summary>
+        /// <remarks>
+        /// Возвращает список всех зарегистрированных аккаунтов с привязкой к клиенту.
+        /// Требуется JWT-токен с ролью "Admin" или "Owner".
+        /// </remarks>
         [Authorize(Roles = "Admin, Owner")]
         [HttpGet("get_accounts")]
         public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
@@ -38,6 +44,12 @@ namespace CompClubAPI.Controllers
         }
 
         // GET: api/Account/5
+        /// <summary>
+        /// Получение информации об аккаунте по его ID (только для администратора).
+        /// </summary>
+        /// <remarks>
+        /// Возвращает подробную информацию об аккаунте.
+        /// </remarks>
         [Authorize(Roles = "Admin")]
         [HttpGet("get_info/{id}")]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -58,7 +70,12 @@ namespace CompClubAPI.Controllers
 
             return Ok(response);
         }
-        
+        /// <summary>
+        /// Получение информации о своем аккаунте (для клиента).
+        /// </summary>
+        /// <remarks>
+        /// Авторизованный клиент может получить свои данные.
+        /// </remarks>
         [Authorize(Roles = "Client")]
         [HttpGet("get_info")]
         [ProducesResponseType(typeof(Account), StatusCodes.Status200OK)] // Успешный ответ[]
@@ -79,6 +96,12 @@ namespace CompClubAPI.Controllers
         
         // PUT: api/Account/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Обновление информации об аккаунте по ID (только для администратора или владельца).
+        /// </summary>
+        /// <remarks>
+        /// Можно частично обновить данные (логин, email, пароль).
+        /// </remarks>
         [Authorize(Roles = "Admin, Owner")] // for employee
         [HttpPut("update/{id}")]
         [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)] // Успешный ответ[]
@@ -100,6 +123,12 @@ namespace CompClubAPI.Controllers
             return Ok(new { message = "Account updated" });
         }
 
+        /// <summary>
+        /// Обновление своей информации (для клиента).
+        /// </summary>
+        /// <remarks>
+        /// Клиент может изменить свой логин и пароль.
+        /// </remarks>
         [Authorize(Roles = "Client")]
         [HttpPut("update")]
         [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]// Успешный ответ
@@ -128,6 +157,12 @@ namespace CompClubAPI.Controllers
             return Ok(new {message = "Account updated successfully!"});
         }
 
+        /// <summary>
+        /// Пополнение баланса текущего аккаунта (только для администратора или владельца).
+        /// </summary>
+        /// <remarks>
+        /// Добавляет указанную сумму к текущему балансу и сохраняет историю.
+        /// </remarks>
         [Authorize(Roles = "Admin,Owner")]
         [HttpPost("add_balance")]
         [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]// Успешный ответ
@@ -157,6 +192,12 @@ namespace CompClubAPI.Controllers
             return Ok(new {message = "Balance updated successfully!"});
         }
         
+        /// <summary>
+        /// Пополнение баланса аккаунта по ID (только для администратора или владельца).
+        /// </summary>
+        /// <remarks>
+        /// Также добавляется запись о доходе для клуба.
+        /// </remarks>
         [Authorize(Roles = "Admin,Owner")]
         [HttpPost("add_balance_by_id/{id}")]
         [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]// Успешный ответ
@@ -192,6 +233,12 @@ namespace CompClubAPI.Controllers
             return Ok(new {message = "Balance updated successfully!"});
         }
 
+        /// <summary>
+        /// Получение истории баланса для текущего клиента.
+        /// </summary>
+        /// <remarks>
+        /// Возвращает список всех операций пополнения.
+        /// </remarks>
         [Authorize(Roles = "Client")]
         [HttpGet("balance_history")]
         [ProducesResponseType(typeof(BalanceHistoryResponse), StatusCodes.Status200OK)]// Успешный ответ
@@ -205,6 +252,13 @@ namespace CompClubAPI.Controllers
             };
             return Ok(response);
         }
+        
+        /// <summary>
+        /// Смена пароля для авторизованного клиента.
+        /// </summary>
+        /// <remarks>
+        /// Хэширует новый пароль и сохраняет его.
+        /// </remarks>
         [Authorize(Roles = "Client")]
         [HttpPost("change_password")]
         [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)] // Успешный ответ
@@ -224,7 +278,13 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new {message = "Password updated successfully!"});
         }
-
+        
+        /// <summary>
+        /// Сброс пароля по email.
+        /// </summary>
+        /// <remarks>
+        /// Генерирует временный пароль и отправляет его на указанный email.
+        /// </remarks>
         [HttpPost("change_password_by_email/{email}")]
         [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)] // Успешный ответ
         public async Task<ActionResult> ChangePasswordByEmail(string email)
@@ -255,6 +315,12 @@ namespace CompClubAPI.Controllers
             return Ok(new {message = "Password sent to email"});
         }
 
+        /// <summary>
+        /// Деактивация аккаунта по ID (только для администратора или владельца).
+        /// </summary>
+        /// <remarks>
+        /// Делает аккаунт неактивным без удаления.
+        /// </remarks>
         [Authorize(Roles = "Admin,Owner")]
         [HttpPut("deactivate_account/{id}")]
         [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)] // Успешный ответ
@@ -274,6 +340,12 @@ namespace CompClubAPI.Controllers
             return Ok(new MessageResponse{Message = "Account deactivated successfully!"});
         }
 
+        /// <summary>
+        /// Аутентификация пользователя и выдача JWT-токена.
+        /// </summary>
+        /// <remarks>
+        /// Проверяет логин и пароль, возвращает JWT при успешной аутентификации.
+        /// </remarks>
         [HttpPost("authentication")]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)] // Успешный ответ

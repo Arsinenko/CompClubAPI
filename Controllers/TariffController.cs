@@ -1,5 +1,6 @@
 using CompClubAPI.Context;
 using CompClubAPI.Models;
+using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,19 +22,25 @@ namespace CompClubAPI.Controllers
         [HttpGet("get_tariffs")]
         public async Task<ActionResult<IEnumerable<Tariff>>> GetTariffs()
         {
-            return await _context.Tariffs.ToListAsync();
+            List<Tariff> tariffs = await _context.Tariffs.ToListAsync();
+            return Ok(new { tariffs });
         }
         [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpPost("create_tariff")]
-        public async Task<ActionResult<Tariff>> CreateTariff(Tariff tariff)
+        public async Task<ActionResult<Tariff>> CreateTariff(CreateTariffModel tariffModel)
         {
+            Tariff tariff = new Tariff
+            {
+                Name = tariffModel.Name,
+                PricePerMinute = tariffModel.PricePerMinute
+            };
             _context.Tariffs.Add(tariff);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("", new { id = tariff.Id });
+            return Ok(new { tariff });
         }
         [Authorize(Roles = "Owner,Admin,Marketer")]
-        [HttpPost("update_tariff/{id}")]
-        public async Task<ActionResult<Tariff>> UpdateTariff(int id, Tariff updateTariff)
+        [HttpPut("update_tariff/{id}")]
+        public async Task<ActionResult<Tariff>> UpdateTariff(int id, UpdateTariffModel updateTariff)
         {
             Tariff? tariff = await _context.Tariffs.FindAsync(id);
             if (tariff == null)

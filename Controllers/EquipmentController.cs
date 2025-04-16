@@ -102,12 +102,22 @@ namespace CompClubAPI.Controllers
         
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPost("create_equipment_maintenance")]
-        public async Task<ActionResult> CreateEquipmentMaintenance(EquipmentMaintenance equipmentMaintenance)
+        [ProducesResponseType(typeof(object), StatusCodes.Status201Created)]
+        public async Task<ActionResult> CreateEquipmentMaintenance(CreateEquipmentMaintenanceModel equipmentMaintenance)
         {
-            _context.EquipmentMaintenances.Add(equipmentMaintenance);
+            EquipmentMaintenance maintenance = new EquipmentMaintenance
+            {
+                EquipmentId = equipmentMaintenance.EquipmentId,
+                MaintenanceDate = equipmentMaintenance.MaintenanceDate,
+                Cost = equipmentMaintenance.Cost,
+                Description = string.IsNullOrEmpty(equipmentMaintenance.Description) ? null : equipmentMaintenance.Description,
+                CreatedAt = DateTime.Now
+            };
+            _context.EquipmentMaintenances.Add(maintenance);
             await _context.SaveChangesAsync();
-            return Created("",
-                new { message = "Equipment maintenance created successfully!", id = equipmentMaintenance.Id });
+            return Created("", new { message = "Equipment maintenance created successfully!" });
+            
+            
         }
         
         [Authorize(Roles = "Owner,Admin,System_administrator")]
