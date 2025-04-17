@@ -19,8 +19,15 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
+        /// <summary>
+        /// Добавление оборудования. Для сотрудников. 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPost("create_equipment")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateEquipment(CreateEquipmentModel model)
         {
             Equipment equipment = new Equipment
@@ -53,8 +60,15 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Created("", new { message = "Equipment created successfully!", id = equipment.Id });
         }
+        /// <summary>
+        /// Получение информации об оборудовании по id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpGet("info/{id}")]
+        [ProducesResponseType(typeof(GetEquipmentResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> GetEquipmentInfo(int id)
         {
             var equipment = await _context.Equipment.FindAsync(id);
@@ -63,10 +77,23 @@ namespace CompClubAPI.Controllers
                 return BadRequest(new { message = "Equipment not found!" });
             }
 
-            return Ok(equipment);
+            GetEquipmentResponse response = new GetEquipmentResponse
+            {
+                Equipment = equipment
+            };
+
+            return Ok(response);
         }
+        /// <summary>
+        /// Обновление данных об оборудовании. Для сотрудников.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="equipment"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPut("update/{id}")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateEquipment(int id, Equipment equipment)
         {
             if (id != equipment.Id)
@@ -78,8 +105,15 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = $"Equipment with id {equipment.Id} updated successfully!" });
         }
+        /// <summary>
+        /// Удаление оборудования. Только для сотрудников.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpDelete("delete/{id}")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteEquipment(int id)
         {
             Equipment? equipment = await _context.Equipment.FindAsync(id);
@@ -92,15 +126,24 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Equipment deleted successfully!" });
         }
-        
+        /// <summary>
+        /// Получение данных об обслуживании оборудования. Для сотрудников. 
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "Owner,Admin,System_administrator")]
-        [HttpGet("EquipmentMaintenances")]
+        [HttpGet("get_equipment_maintenances")]
+        [ProducesResponseType(typeof(GetEquipmentMaintenanceResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<EquipmentMaintenance>>> GetEquipmentMaintenances()
         {
             List<EquipmentMaintenance> equipmentMaintenances = await _context.EquipmentMaintenances.ToListAsync();
-            return Ok(equipmentMaintenances);
+            
+            return Ok(new { equipmentMaintenances });
         }
-        
+        /// <summary>
+        /// Добавление данных об обслуживании оборудования. Для сотрудников.
+        /// </summary>
+        /// <param name="equipmentMaintenance"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPost("create_equipment_maintenance")]
         [ProducesResponseType(typeof(object), StatusCodes.Status201Created)]
@@ -117,12 +160,18 @@ namespace CompClubAPI.Controllers
             _context.EquipmentMaintenances.Add(maintenance);
             await _context.SaveChangesAsync();
             return Created("", new { message = "Equipment maintenance created successfully!" });
-            
-            
         }
         
+        /// <summary>
+        /// Обновление данных об обслуживании оборудования. Для сотрудников.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="equipmentMaintenance"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPut("update_equipment_maintenance/{id}")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateEquipmentMaintenance(int id, EquipmentMaintenance equipmentMaintenance)
         {
             if (id != equipmentMaintenance.Id)
@@ -135,18 +184,27 @@ namespace CompClubAPI.Controllers
             return Ok(new
                 { message = $"Equipment maintenance with id {equipmentMaintenance.Id} updated successfully!" });
         }
+        /// <summary>
+        /// Получение данных об оборудовании. Для сотрудников.
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpGet("get_equipment")]
-        [ProducesResponseType(typeof(GetEquipmentSchema), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetEquipmentsSchema), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<Equipment>>> GetEquipment()
         {
             List<Equipment> equipments = await _context.Equipment.ToListAsync();
             return Ok(new {equipments});
         }
-
+        
+        /// <summary>
+        /// Получении оборудования по id клуба. Для сотрудников.
+        /// </summary>
+        /// <param name="idClub"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpGet("get_equipment_by_club/{idClub}")]
-        [ProducesResponseType(typeof(GetEquipmentSchema), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetEquipmentsSchema), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<Equipment>>> GetEquipmentByClub(int idClub)
         {
             List<Equipment> equipments = await _context.Equipment.Where(e => e.IdClub == idClub).ToListAsync();

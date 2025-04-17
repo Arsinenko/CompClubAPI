@@ -172,7 +172,11 @@ namespace CompClubAPI.Controllers
             return Ok(new { message = "Employee updated successfully!" });
         }
         
-
+        /// <summary>
+        /// авторизация пользователя. Возвращает токен.
+        /// </summary>
+        /// <param name="authModel"></param>
+        /// <returns></returns>
         [HttpPost("authorization")]
         [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

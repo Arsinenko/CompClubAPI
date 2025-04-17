@@ -1,5 +1,6 @@
 using CompClubAPI.Context;
 using CompClubAPI.Models;
+using CompClubAPI.ResponseSchema;
 using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,9 +19,14 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-
+        /// <summary>
+        /// Создание отзыва. Для клиента.
+        /// </summary>
+        /// <param name="feedbackModel"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Client")]
         [HttpPost("create_feedback")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status201Created)]
         public async Task<ActionResult> CreateFeedback(CreateFeedbackModel feedbackModel)
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
@@ -38,7 +44,7 @@ namespace CompClubAPI.Controllers
             
             return Created("", new { message = "Feedback created successfully!", id = feedback.Id });
         }
-
+        
         [HttpGet("get_feedbacks")]
         public async Task<ActionResult> GetFeedbacks()
         {

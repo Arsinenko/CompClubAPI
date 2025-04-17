@@ -2,7 +2,7 @@
 
 namespace CompClubAPI.ResponseSchema;
 
-public class GetEquipmentSchema
+public class GetEquipmentsSchema
 {
     public List<Equipment> Equipments { get; set; }
 }
