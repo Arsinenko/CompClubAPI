@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using CompClubAPI.Context;
 using CompClubAPI.Models;
+using CompClubAPI.ResponseSchema;
 using CompClubAPI.Schemas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,11 +23,25 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
-        
-        
+        /// <summary>
+        /// Наем сотрудника. Только для владельцев
+        /// </summary>
+        /// <param name="employeeModel"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "Owner")]
         [HttpPost("hire_employee")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> HireEmployee(HireEmployeeModel employeeModel)
         {
+            if (!await _context.Roles.AnyAsync(r => r.Id == employeeModel.IdRole))
+            {
+                return BadRequest(new {error = "Invalid role id!"});
+            }
+            if (!await _context.Roles.AnyAsync(r => r.Id == employeeModel.IdClub))
+            {
+                return BadRequest(new {error = "Invalid club id!"});
+            }
             Employee employee = new Employee
             {
                 Login = employeeModel.Login,
@@ -43,16 +58,30 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Created("", new { message = "Employee hired successfully!", id = employee.Id });
         }
+        
+        /// <summary>
+        /// Получение данных о сотрудника. Только для владельцев.
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "Owner")]
         [HttpGet("get_employees")]
+        [ProducesResponseType(typeof(EmployeesResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetEmployees()
         {
             List<Employee> employees = await _context.Employees.ToListAsync();
             return Ok(new {employees = employees});
             
         }
+        
+        /// <summary>
+        /// Получение данных о сотрудниках определенного клуба. Только для админов и владельцев.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Owner,Admin")]
         [HttpGet("get_employees_by_club/{id}")]
+        [ProducesResponseType(typeof(EmployeesResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(EmployeesResponseForAdmin),StatusCodes.Status200OK)]
         public async Task<ActionResult> GetEmployeesByClub(int id)
         {
             if (User.FindFirstValue(ClaimTypes.Role) == "Owner")
@@ -71,8 +100,16 @@ namespace CompClubAPI.Controllers
             }).ToListAsync();
             return Ok(new { employees_admin });
         }
+        
+        /// <summary>
+        /// Увольнение сотрудника. Только для владельцев.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Owner")]
-        [HttpPost("fire_employee/{id}")]
+        [HttpDelete("fire_employee/{id}")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> FireEmployee(int id)
         {
             Employee? employee = await _context.Employees.FindAsync(id);
@@ -84,20 +121,22 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Employee fired successfully!" });
         }
-        //update employee password
+        /// <summary>
+        /// Обновление пароля сотрудника
+        /// </summary>
+        /// <param name="password"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Owner,Admin,Salesperson")]
         [HttpPut("update_employee_password")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdatePassword([FromBody]string password)
         {
-            int? id = Convert.ToInt32(User.FindFirst("employee_id")?.Value);
-            if (id == null)
-            {
-                return Unauthorized();
-            }
+            int id = Convert.ToInt32(User.FindFirst("employee_id")?.Value);
             Employee? employee = await _context.Employees.FindAsync(id);
             if (employee == null)
             {
-                return BadRequest(new { message = "Employee not found!" });
+                return BadRequest(new { error = "Employee not found!" });
             }
             var hash = HashHelper.GenerateHash(password);
             employee.Password = hash;
@@ -106,9 +145,17 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Password updated successfully!" });
         }
-
+        
+        /// <summary>
+        /// Обновление данных сотрудника. Только для админов и владельцев.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="employeeModel"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin,Owner")]
         [HttpPut("update_employee/{id}")]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateEmployee(int id, UpdateEmployeeModel employeeModel)
         {
             Employee? employee = await _context.Employees.FindAsync(id);
@@ -127,6 +174,8 @@ namespace CompClubAPI.Controllers
         
 
         [HttpPost("authorization")]
+        [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Authorization(AuthModel authModel)
         {
             byte[] passwordHash = HashHelper.GenerateHash(authModel.password);
@@ -134,12 +183,12 @@ namespace CompClubAPI.Controllers
                 a.Login == authModel.login && a.Password.SequenceEqual(passwordHash));
             if (employee == null)
             {
-                return NotFound(new { error = "Employee not found!" });
+                return BadRequest(new { error = "Employee not found!" });
             }
             string? role = await _context.Roles.Where(r => r.Id == employee.IdRole).Select(r => r.Name).FirstOrDefaultAsync();
             if (role == null)
             {
-                return NotFound(new { error = "Role not found!" });
+                return BadRequest(new { error = "Role not found!" });
             }
             employee.LastLogin = DateTime.Now;
             _context.Update(employee);

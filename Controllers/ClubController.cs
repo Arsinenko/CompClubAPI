@@ -83,8 +83,14 @@ namespace CompClubAPI.Controllers
                 .ToListAsync();
             return Ok(new { clubs });
         }
-        
+        /// <summary>
+        /// Получение информации о клубе.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("get_club_info/{id}")]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(GetClubResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult<Club>> GetClubInfo(int id)
         {
             Club? club = await _context.Clubs.FindAsync(id);
@@ -101,8 +107,16 @@ namespace CompClubAPI.Controllers
                 createdAt = club.CreatedAt
             });
         }
+        
+        /// <summary>
+        /// Закрытие клуба
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Owner")]
         [HttpDelete("delete_club/{id}")]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteClub(int id)
         {
             Club? club = await _context.Clubs.FindAsync(id);
@@ -114,9 +128,17 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { error = "Club deleted successfully!" });
         }
-
+        
+        /// <summary>
+        /// Обновление данных клуба
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Authorize(Roles = "Admin, Owner")]
         [HttpPut("update_club/{id}")]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult<Club>> UpdateClub(int id, UpdateClubModel model)
         {
             // var role = FindFristValue(Claim.Types)
