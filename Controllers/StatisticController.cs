@@ -17,6 +17,15 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
+
+        /// <summary>
+        /// Обновление финансовой статистики клуба.
+        /// </summary>
+        /// <param name="id">Идентификатор клуба</param>
+        /// <param name="money">Сумма денег</param>
+        /// <param name="revenue">Признак дохода (true) или расхода (false)</param>
+        /// <returns>Сообщение об успешном обновлении</returns>
+        /// <remarks>Доступно для ролей Owner, Admin, Marketer</remarks>
         [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpPut("update_finance_statistic/{id}")] // id - id клуба
         public async Task<ActionResult> UpdateFinanceStatistic(int id, decimal money, bool revenue)
@@ -57,6 +66,12 @@ namespace CompClubAPI.Controllers
             return false;
         }
 
+        /// <summary>
+        /// Получение финансовой статистики клуба.
+        /// </summary>
+        /// <param name="id">Идентификатор клуба</param>
+        /// <returns>Список доходов/расходов и текущее финансовое состояние</returns>
+        /// <remarks>Доступно для ролей Owner, Admin, Marketer</remarks>
         [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpGet("get_club_finance_statistic/{id}")] // id - id клуба
         public async Task<ActionResult> GetClubStatistic(int id)
@@ -67,6 +82,11 @@ namespace CompClubAPI.Controllers
             decimal currentFinances = await _context.Statistics.Where(s => s.IdClub == id).Select(s => s.Finances).FirstOrDefaultAsync();
             return Ok(new { costRevenues, currentFinances });
         }
+        /// <summary>
+        /// Получение всех статистик.
+        /// </summary>
+        /// <returns>Список всех статистик</returns>
+        /// <remarks>Доступно для ролей Owner, Admin, Marketer</remarks>
         [Authorize(Roles = "Owner,Admin,Marketer")]
         [HttpGet("statistics")]
         public async Task<ActionResult> GetStatistics()

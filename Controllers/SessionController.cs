@@ -20,6 +20,14 @@ namespace CompClubAPI.Controllers
             _sessionService = sessionService;
             _context = context;
         }
+
+        /// <summary>
+        /// Запуск таймера сессии и создание бронирования.
+        /// </summary>
+        /// <param name="interval">Интервал времени</param>
+        /// <param name="model">Модель бронирования</param>
+        /// <returns>Идентификатор таймера и сообщение о запуске</returns>
+        /// <remarks>Доступно только для роли Client</remarks>
         [Authorize(Roles = "Client")]
         [HttpPost("start")]
         public async Task<ActionResult> StartTimer([FromQuery]int interval, CreateBookingModel model)
@@ -39,6 +47,11 @@ namespace CompClubAPI.Controllers
             return Ok(new {timerId=timerId, message = "Timer started"});
         }
 
+        /// <summary>
+        /// Остановка таймера сессии.
+        /// </summary>
+        /// <param name="timerId">Идентификатор таймера</param>
+        /// <returns>Статус остановки и сообщение</returns>
         [HttpPost("stop")]
         public async Task<ActionResult> StopTimer([FromQuery] int timerId)
         {

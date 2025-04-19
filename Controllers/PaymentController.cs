@@ -27,7 +27,11 @@ namespace CompClubAPI.Controllers
         //     return await _context.Payments.ToListAsync();
         // }
 
-        // GET: api/Payments/5
+        /// <summary>
+        /// Получение информации о платежных данных текущего пользователя.
+        /// </summary>
+        /// <returns>Информация о платежных данных</returns>
+        /// <remarks>Доступно только для роли Client</remarks>
         [Authorize(Roles = "Client")]
         [HttpGet("get_info")]
         public async Task<ActionResult<Payment>> GetPayment()
@@ -49,9 +53,12 @@ namespace CompClubAPI.Controllers
             });
         }
 
-
-        // POST: api/Payments
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Создание или обновление платежных данных.
+        /// </summary>
+        /// <param name="paymentModel">Модель платежных данных</param>
+        /// <returns>Идентификатор созданных/обновленных платежных данных</returns>
+        /// <remarks>Доступно только для роли Client</remarks>
         [Authorize(Roles = "Client")]
         [HttpPost("create")]
         public async Task<ActionResult> PostPayment(CreatePaymentModel paymentModel)
@@ -91,7 +98,11 @@ namespace CompClubAPI.Controllers
             }
         }
 
-        // DELETE: api/Payments/5
+        /// <summary>
+        /// Удаление платежных данных текущего пользователя.
+        /// </summary>
+        /// <returns>Результат операции</returns>
+        /// <remarks>Требуется авторизация</remarks>
         [Authorize]
         [HttpDelete("delete")]
         public async Task<IActionResult> DeletePayment()

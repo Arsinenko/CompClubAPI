@@ -19,6 +19,13 @@ namespace CompClubAPI.Controllers
         {
             _context = context;
         }
+
+        /// <summary>
+        /// Создание нового рабочего места.
+        /// </summary>
+        /// <param name="model">Модель рабочего места</param>
+        /// <returns>Сообщение об успешном создании и идентификатор</returns>
+        /// <remarks>Доступно для ролей Owner, Admin, System_administrator</remarks>
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPost("create_working_space")]
         public async Task<ActionResult> CreateWorkingSpace(CreateWorkingSpace model)
@@ -36,6 +43,12 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Created("", new { message = "Working space created successfully!", id = workingSpace.Id });
         }
+
+        /// <summary>
+        /// Получение списка всех рабочих мест.
+        /// </summary>
+        /// <returns>Список рабочих мест</returns>
+        /// <remarks>Доступно для ролей Owner, Admin, System_administrator</remarks>
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpGet("working_spaces")]
         public async Task<ActionResult> GetWorkingSpaces()
@@ -43,6 +56,13 @@ namespace CompClubAPI.Controllers
             List<WorkingSpace> workingSpaces = await _context.WorkingSpaces.ToListAsync();
             return Ok(new {workingSpaces});
         }
+
+        /// <summary>
+        /// Получение рабочих мест по клубу.
+        /// </summary>
+        /// <param name="idClub">Идентификатор клуба</param>
+        /// <returns>Список рабочих мест клуба</returns>
+        /// <remarks>Доступно для ролей Owner, Admin, System_administrator, Client</remarks>
         [Authorize(Roles = "Owner,Admin,System_administrator,Client")]
         [HttpGet("working_spaces_by_club/{idClub}")]
         public async Task<ActionResult> GetWorkingSpacesByClub(int idClub)
@@ -58,12 +78,25 @@ namespace CompClubAPI.Controllers
             return Ok(new {workingSpaces});
         }
 
+        /// <summary>
+        /// Получение информации о рабочем месте.
+        /// </summary>
+        /// <param name="id">Идентификатор рабочего места</param>
+        /// <returns>Информация о рабочем месте</returns>
         [HttpGet("get_info/{id}")]
         public async Task<ActionResult> GetWorkingSpace(int id)
         {
             WorkingSpace? workingSpace = await _context.WorkingSpaces.FindAsync(id);
             return Ok(workingSpace);
         }
+
+        /// <summary>
+        /// Обновление информации о рабочем месте.
+        /// </summary>
+        /// <param name="id">Идентификатор рабочего места</param>
+        /// <param name="workingSpace">Модель рабочего места</param>
+        /// <returns>Сообщение об успешном обновлении</returns>
+        /// <remarks>Доступно для ролей Owner, Admin, System_administrator</remarks>
         [Authorize(Roles = "Owner,Admin,System_administrator")]
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateWorkingSpace(int id, CreateWorkingSpace workingSpace)
@@ -85,6 +118,11 @@ namespace CompClubAPI.Controllers
             return Ok(new { message = $"Working space with id {workingSpaceExists.Id} updated successfully!" });
         }
 
+        /// <summary>
+        /// Удаление рабочего места.
+        /// </summary>
+        /// <param name="id">Идентификатор рабочего места</param>
+        /// <returns>Сообщение об успешном удалении</returns>
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteWorkingSpace(int id)
         {
@@ -98,6 +136,11 @@ namespace CompClubAPI.Controllers
             return Ok(new { message = $"Working space with id {workingSpace.Id} deleted successfully!" });
         }
 
+        /// <summary>
+        /// Добавление оборудования к рабочему месту.
+        /// </summary>
+        /// <param name="workingSpaceEquipment">Модель оборудования рабочего места</param>
+        /// <returns>Сообщение об успешном добавлении</returns>
         [HttpPost("add_equipment")]
         public async Task<ActionResult> AddEquipmentToWorkingSpace(WorkingSpaceEquipment workingSpaceEquipment)
         {
@@ -106,6 +149,11 @@ namespace CompClubAPI.Controllers
             return Created("", new { message = "Equipment added to working space successfully!" });
         }
 
+        /// <summary>
+        /// Удаление оборудования с рабочего места.
+        /// </summary>
+        /// <param name="id">Идентификатор оборудования рабочего места</param>
+        /// <returns>Сообщение об успешном удалении</returns>
         [HttpDelete("delete_equipment/{id}")]
         public async Task<ActionResult> DeleteEquipmentFromWorkingSpace(int id)
         {

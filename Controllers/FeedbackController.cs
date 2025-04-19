@@ -22,8 +22,9 @@ namespace CompClubAPI.Controllers
         /// <summary>
         /// Создание отзыва. Для клиента.
         /// </summary>
-        /// <param name="feedbackModel"></param>
-        /// <returns></returns>
+        /// <param name="feedbackModel">Модель отзыва</param>
+        /// <returns>Сообщение об успешном создании отзыва</returns>
+        /// <remarks>Доступно только для роли Client</remarks>
         [Authorize(Roles = "Client")]
         [HttpPost("create_feedback")]
         [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status201Created)]
@@ -45,6 +46,10 @@ namespace CompClubAPI.Controllers
             return Created("", new { message = "Feedback created successfully!", id = feedback.Id });
         }
         
+        /// <summary>
+        /// Получение всех отзывов.
+        /// </summary>
+        /// <returns>Список отзывов с информацией о клиенте и клубе</returns>
         [HttpGet("get_feedbacks")]
         public async Task<ActionResult> GetFeedbacks()
         {
@@ -63,6 +68,11 @@ namespace CompClubAPI.Controllers
             return Ok(new {result});
         }
         
+        /// <summary>
+        /// Получение отзывов текущего клиента.
+        /// </summary>
+        /// <returns>Список отзывов клиента</returns>
+        /// <remarks>Доступно только для роли Client</remarks>
         [Authorize(Roles = "Client")]
         [HttpGet("get_client_feedbacks")]
         public async Task<ActionResult> GetClientFeedbacks()
@@ -72,6 +82,13 @@ namespace CompClubAPI.Controllers
             return Ok(feedbacks);
         }
 
+        /// <summary>
+        /// Обновление отзыва клиента.
+        /// </summary>
+        /// <param name="id">Идентификатор отзыва</param>
+        /// <param name="feedbackModel">Модель отзыва с новыми данными</param>
+        /// <returns>Сообщение об успешном обновлении отзыва</returns>
+        /// <remarks>Доступно только для роли Client</remarks>
         [Authorize(Roles = "Client")]
         [HttpPost("update_feedback/{id}")]
         public async Task<IActionResult> UpdateFeedback(int id, CreateFeedbackModel feedbackModel)
@@ -93,6 +110,12 @@ namespace CompClubAPI.Controllers
             
             return Ok(new {message = "Feedback updated successfully!"});
         }
+        /// <summary>
+        /// Удаление отзыва клиента.
+        /// </summary>
+        /// <param name="id">Идентификатор отзыва</param>
+        /// <returns>Сообщение об успешном удалении отзыва</returns>
+        /// <remarks>Доступно только для роли Client</remarks>
         [Authorize(Roles = "Client")]
         [HttpDelete("delete_feedback/{id}")]
         public async Task<IActionResult> DeleteFeedback(int id)
