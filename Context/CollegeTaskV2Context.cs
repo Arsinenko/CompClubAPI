@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using CompClubAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace CompClubAPI.Context;
 
 public partial class CollegeTaskV2Context : DbContext
 {
+    private readonly IConfiguration _configuration;
+
     public CollegeTaskV2Context()
     {
     }
@@ -14,6 +17,12 @@ public partial class CollegeTaskV2Context : DbContext
     public CollegeTaskV2Context(DbContextOptions<CollegeTaskV2Context> options)
         : base(options)
     {
+    }
+
+    public CollegeTaskV2Context(DbContextOptions<CollegeTaskV2Context> options, IConfiguration configuration)
+        : base(options)
+    {
+        _configuration = configuration;
     }
 
     public virtual DbSet<Account> Accounts { get; set; }
@@ -59,8 +68,17 @@ public partial class CollegeTaskV2Context : DbContext
     public virtual DbSet<WorkingSpaceEquipment> WorkingSpaceEquipments { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=localhost;Database=CollegeTaskV2;Encrypt=True;TrustServerCertificate=True;User Id=sa;Password=Milk2468!");
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                connectionString = "Server=localhost;Database=CollegeTaskV2;Encrypt=True;TrustServerCertificate=True;User Id=sa;Password=Milk2468!";
+            }
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

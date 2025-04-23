@@ -38,6 +38,7 @@
     <_ContentIncludedByDefault Remove="wwwroot\pages\login.html" />
     <_ContentIncludedByDefault Remove="wwwroot\pages\register.html" />
     <_ContentIncludedByDefault Remove="Pages\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\_ValidationScriptsPartial.cshtml" />
   </ItemGroup>
 
   <ItemGroup>

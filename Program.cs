@@ -8,6 +8,7 @@ using CompClubAPI.Middleware;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Cors;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompClubAPI
 {
@@ -22,7 +23,16 @@ namespace CompClubAPI
             // Add services to the container
             builder.Services.AddLogging();
             builder.Services.AddSingleton<SessionService>();
-            builder.Services.AddDbContext<CollegeTaskV2Context>();
+            
+            // Configure the database context
+            string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                connectionString = "Server=localhost;Database=CollegeTaskV2;Encrypt=True;TrustServerCertificate=True;User Id=sa;Password=Milk2468!";
+            }
+            builder.Services.AddDbContext<CollegeTaskV2Context>(options =>
+                options.UseSqlServer(connectionString));
+            
             builder.Services.AddRazorPages();
 
             builder.Services.AddCors(options =>

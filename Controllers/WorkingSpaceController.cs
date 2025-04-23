@@ -76,8 +76,8 @@ namespace CompClubAPI.Controllers
             }
             List<WorkingSpace> workingSpaces = await query.ToListAsync();
             return Ok(new {workingSpaces});
+        
         }
-
         /// <summary>
         /// Получение информации о рабочем месте.
         /// </summary>

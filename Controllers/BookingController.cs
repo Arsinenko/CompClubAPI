@@ -116,7 +116,7 @@ namespace CompClubAPI.Controllers
         public async Task<ActionResult> GetClientBookings()
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
-            List<Booking> bookings = await _context.Bookings.Where(b => b.AccountId == accountId).ToListAsync();
+            List<Booking> bookings = await _context.Bookings.Where(b => b.AccountId == accountId).Include(b => b.IdWorkingSpace).ToListAsync();
             return Ok(new {bookings});
         }
 
