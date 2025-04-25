@@ -79,6 +79,7 @@ namespace CompClubAPI.Controllers
         [ProducesResponseType(typeof(BookingsResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
         {
+            
             List<Booking> bookings = await _context.Bookings.ToListAsync();
             BookingsResponse response = new BookingsResponse
             {
@@ -112,13 +113,37 @@ namespace CompClubAPI.Controllers
         /// </summary>
         [Authorize(Roles = "Client")]
         [HttpGet("get_client_bookings")]
-        [ProducesResponseType(typeof(BookingsResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ClientBookingsResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetClientBookings()
         {
             int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
-            List<Booking> bookings = await _context.Bookings.Where(b => b.AccountId == accountId).Include(b => b.IdWorkingSpace).ToListAsync();
-            return Ok(new {bookings});
+
+            var bookings = await _context.Bookings
+                .Where(b => b.AccountId == accountId)
+                .Select(b => new
+                {
+                    b.Id,
+                    b.StartTime,
+                    b.EndTime,
+                    b.TotalCost,
+                    b.CreatedAt,
+                    b.UpdatedAt,
+                    WorkingSpace = new
+                    {
+                        b.IdWorkingSpaceNavigation.Id,
+                        b.IdWorkingSpaceNavigation.Name,
+                        b.IdWorkingSpaceNavigation.Status,
+                        Club = new
+                        {
+                            b.IdWorkingSpaceNavigation.IdClubNavigation.Address
+                        }
+                    }
+                })
+                .ToListAsync();
+
+            return Ok(new { bookings });
         }
+
 
         /// <summary>
         /// Удаление конкретного бронирования клиента по ID.

@@ -200,38 +200,50 @@ namespace CompClubAPI.Controllers
         /// </remarks>
         [Authorize(Roles = "Admin,Owner")]
         [HttpPost("add_balance_by_id/{id}")]
-        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]// Успешный ответ
-        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]// Ошибка 400
+        [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddBalanceById(int id, [FromQuery] int idClub, decimal money)
         {
-            Account? account = await _context.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id);
             if (account == null)
             {
-                return BadRequest(new { error = "Account not found!" });
+                return BadRequest(new ErrorResponse { Error = "Account not found!" });
             }
-            BalanceHistory history = new BalanceHistory
+
+            var clubExists = await _context.Clubs.AnyAsync(c => c.Id == idClub);
+            if (!clubExists)
+            {
+                return BadRequest(new ErrorResponse { Error = "Club with provided ID does not exist!" });
+            }
+
+            var history = new BalanceHistory
             {
                 AccountId = id,
                 Action = "add_balance",
                 Price = money,
                 PreviousBalance = account.Balance
             };
-            CostRevenue revenue = new CostRevenue
+
+            var revenue = new CostRevenue
             {
                 IdClub = idClub,
                 Amount = money,
                 Revenue = true,
                 CreatedAt = DateTime.Now
             };
+
             _context.CostRevenues.Add(revenue);
             _context.BalanceHistories.Add(history);
+
             account.Balance += money;
             account.UpdatedAt = DateTime.Now;
             _context.Accounts.Update(account);
-            
+
             await _context.SaveChangesAsync();
-            return Ok(new {message = "Balance updated successfully!"});
+
+            return Ok(new MessageResponse { Message = "Balance updated successfully!" });
         }
+
 
         /// <summary>
         /// Получение истории баланса для текущего клиента.
