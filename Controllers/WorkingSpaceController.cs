@@ -89,6 +89,19 @@ namespace CompClubAPI.Controllers
             WorkingSpace? workingSpace = await _context.WorkingSpaces.FindAsync(id);
             return Ok(workingSpace);
         }
+        
+         [Authorize]
+         [HttpGet("get_empty_working_spaces_by_time")]
+         public async Task<ActionResult> GetEmptyWorkingSpacesByTime(GetWorkingSpacesByTimeSchema model)
+         {
+             //получение всех рабочих мест где на момент переданного времени нет бронирований
+             List<WorkingSpace> freeWorkingSpaces = await _context.WorkingSpaces.Where(ws =>
+                 !ws.Bookings.Any(b =>
+                     b.StartTime < model.StartDatetime && b.EndTime > model.StartDatetime)).ToListAsync();
+             List<WorkingSpace> occupiedWorkingSpaces =
+                 await _context.WorkingSpaces.Where(ws => !freeWorkingSpaces.Contains(ws)).ToListAsync();
+             return Ok(new { freeWorkingSpaces, occupiedWorkingSpaces });
+         }
 
         /// <summary>
         /// Обновление информации о рабочем месте.
@@ -166,5 +179,7 @@ namespace CompClubAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = $"Working space equipment with id {workingSpaceEquipment.Id} deleted successfully!" });
         }
+
+        
     }
 }

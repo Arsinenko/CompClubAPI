@@ -199,10 +199,10 @@ namespace CompClubAPI.Controllers
         /// Также добавляется запись о доходе для клуба.
         /// </remarks>
         [Authorize(Roles = "Admin,Owner")]
-        [HttpPost("add_balance_by_id/{id}")]
+        [HttpPost("add_balance_by_id/{id}/{idClub}/{money}")]
         [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> AddBalanceById(int id, [FromQuery] int idClub, decimal money)
+        public async Task<ActionResult> AddBalanceById(int id, int idClub, decimal money)
         {
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id);
             if (account == null)
@@ -344,10 +344,13 @@ namespace CompClubAPI.Controllers
             {
                 return BadRequest(new { error = "Account not found!" });
             }
+            
 
             account.IsAlive = false;
             account.UpdatedAt = DateTime.Now;
             _context.Accounts.Update(account);
+            List<Feedback> feedbacks = await _context.Feedbacks.Where(f => f.AccountId == id).ToListAsync();
+            _context.Feedbacks.RemoveRange(feedbacks);
             await _context.SaveChangesAsync();
             return Ok(new MessageResponse{Message = "Account deactivated successfully!"});
         }

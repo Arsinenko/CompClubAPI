@@ -30,19 +30,25 @@ namespace CompClubAPI.Controllers
         /// <remarks>Доступно только для роли Client</remarks>
         [Authorize(Roles = "Client")]
         [HttpPost("start")]
-        public async Task<ActionResult> StartTimer([FromQuery]int interval, CreateBookingModel model)
+        public async Task<ActionResult> StartTimer(CreateBookingModel model)
         {
+            var accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+            
+            int interval = 60;
             //create booking
             Booking booking = new Booking
             {
+                AccountId = accountId,
                 IdWorkingSpace = model.IdWorkingSpace,
-                StartTime = DateTime.Now
+                StartTime = DateTime.Now,
+                EndTime = null,
+                IdStatus = 1
             };
 
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
             
-            int accountId = Convert.ToInt32(User.FindFirst("account_id")?.Value);
+            
             int timerId = await _sessionService.StartTimer(interval, accountId);
             return Ok(new {timerId=timerId, message = "Timer started"});
         }

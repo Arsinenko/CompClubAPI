@@ -59,6 +59,7 @@ namespace CompClubAPI.Controllers
                 join club in _context.Clubs on feedback.IdClub equals club.Id
                 select new
                 {
+                    IdClub = feedback.IdClub,
                     Rating = feedback.Rating,
                     Comment = feedback.Comment,
                     Name = client.FirstName,
@@ -126,6 +127,22 @@ namespace CompClubAPI.Controllers
             if (feedback == null)
             {
                 return BadRequest(new { error = "Feedback not found or not yours!" });
+            }
+            
+            _context.Feedbacks.Remove(feedback);
+            await _context.SaveChangesAsync();
+            return Ok(new {message = "Feedback deleted successfully!"});
+        }
+
+        [Authorize(Roles = "Owner,Admin")]
+        [HttpDelete("delete_feedback_admin/{id}")]
+        public async Task<IActionResult> DeleteFeedbackAdmin(int id)
+        {
+            Feedback? feedback = await _context.Feedbacks.Where(f => f.Id == id).FirstOrDefaultAsync();
+            
+            if (feedback == null)
+            {
+                return BadRequest(new { error = "Feedback not found!" });
             }
             
             _context.Feedbacks.Remove(feedback);
